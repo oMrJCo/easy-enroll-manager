@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#e5252a">
-<title>Easy Smart & EnrollOne Online</title>
+<title>Easy Smart & EnrollOne Business Manager v1.2.2</title>
 <style>
 :root{
   --bg:#f5f7fb; --card:#fff; --text:#172033; --muted:#748099;
@@ -358,42 +358,13 @@ body[data-module="enroll"] .kpi:after{background:var(--brand-gradient)}
 }
 
 
-.cloud-status{margin:0 3px 8px;padding:7px 9px;border-radius:9px;font-size:10.5px;font-weight:700;text-align:center;background:#fff7df;color:#946200;border:1px solid #f7e7ad}
-.cloud-status[data-state="ok"]{background:#edf9f3;color:#12805a;border-color:#d9efe5}
-.cloud-status[data-state="error"]{background:#fff0f1;color:#cf2630;border-color:#ffd9dc}
-.pin-gate{position:fixed;inset:0;z-index:99999;background:rgba(10,14,22,.96);display:flex;align-items:center;justify-content:center;padding:20px}
-.pin-card{width:min(360px,100%);background:#fff;border-radius:18px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.35)}
-.pin-card h2{margin:0 0 6px;font-size:22px;color:#111827}
-.pin-card p{margin:0 0 16px;color:#6b7280;font-size:13px}
-.pin-card input{width:100%;box-sizing:border-box;font-size:28px;letter-spacing:8px;text-align:center;padding:12px;border:1px solid #d1d5db;border-radius:12px}
-.pin-card button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:12px;background:#111827;color:#fff;font-weight:700;cursor:pointer}
-.pin-error{min-height:18px;margin-top:8px;text-align:center;color:#dc2626;font-size:12px}
-
+.sales-month-card{background:#fff;border:1px solid var(--line);border-radius:16px;margin:0 0 14px;overflow:hidden;box-shadow:var(--shadow)}
+.sales-month-card>summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;justify-content:space-between;gap:12px;align-items:center;background:var(--surface);font-size:15px}
+.sales-month-card>summary::-webkit-details-marker{display:none}.sales-month-card>summary span{font-size:12px;color:var(--muted);font-weight:600}.sales-month-card[open]>summary{border-bottom:1px solid var(--line)}
+.sales-month-grid{padding:14px}.sales-month-grid .card{box-shadow:none}
 </style>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-import { firebaseConfig } from "./firebase-config.js";
-
-const app = initializeApp(firebaseConfig);
-const firestore = getFirestore(app);
-window.__cloud = { db: firestore, doc, getDoc, setDoc, onSnapshot };
-window.dispatchEvent(new Event("firebase-ready"));
-</script>
-
 </head>
 <body data-module="easy">
-<div id="pinGate" class="pin-gate">
-  <div class="pin-card">
-    <h2>เข้าสู่ระบบ</h2>
-    <p>กรอก PIN เพื่อเข้าใช้งาน</p>
-    <input id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
-    <button id="pinEnterBtn" type="button">เข้าใช้งาน</button>
-    <div id="pinError" class="pin-error"></div>
-  </div>
-</div>
-
 <div class="app">
   <aside class="sidebar">
     <div class="brand"><div class="logo" id="brandLogo">E</div><span id="brandText">Easy Smart</span></div>
@@ -401,7 +372,6 @@ window.dispatchEvent(new Event("firebase-ready"));
       <button id="moduleEasyBtn" class="active" onclick="switchModule('easy')">Easy Smart</button>
       <button id="moduleEnrollBtn" onclick="switchModule('enroll')">EnrollOne</button>
     </div>
-    <div id="cloudStatus" class="cloud-status" data-state="warn">กำลังเชื่อม Cloud…</div>
     <div id="moduleContext" style="font-size:11px;color:#8a94a8;padding:0 8px 10px">ระบบ Easy Smart แยกอิสระ</div>
     <div class="nav">
       <button class="active" data-page="dashboard">📊 <span>ภาพรวม</span></button>
@@ -614,22 +584,8 @@ window.dispatchEvent(new Event("firebase-ready"));
 </div>
         </div>
 
-        <div class="grid2">
-          <div class="card panel">
-            <div class="panel-title"><span>Easy Smart Lock</span><span class="badge b-red">ปันผล 10 บาท / เครดิต</span></div>
-            <table>
-              <thead><tr><th>วันที่</th><th>ร้านค้า</th><th class="num">เครดิต</th><th class="num">ยอดขาย</th><th class="num">ต้นทุน</th><th class="num">กำไร</th><th></th></tr></thead>
-              <tbody id="allEasySales"></tbody>
-            </table>
-          </div>
-          <div class="card panel">
-            <div class="panel-title"><span>ODM</span><span class="badge b-blue">ปันผล 5% จากกำไร</span></div>
-            <table>
-              <thead><tr><th>วันที่</th><th>ร้านค้า</th><th class="num">Unit</th><th class="num">ยอดขาย</th><th class="num">ต้นทุน</th><th class="num">กำไร</th><th></th></tr></thead>
-              <tbody id="allODMSales"></tbody>
-            </table>
-          </div>
-        </div>
+        <div id="salesHistoryByMonth"></div>
+        <div style="display:none"><table><tbody id="allEasySales"></tbody><tbody id="allODMSales"></tbody></table></div>
       </div>
 
       <div id="outstandingTab" style="display:none">
@@ -758,7 +714,7 @@ window.dispatchEvent(new Event("firebase-ready"));
         <div class="sumitem"><small>ยอดขายรวม</small><strong id="sSales">฿0</strong></div>
         <div class="sumitem"><small>ทุนรวม</small><strong id="sCost">฿0</strong></div>
         <div class="sumitem"><small>กำไรรวม</small><strong id="sProfit">฿0</strong></div>
-        <div class="sumitem"><small>ปันผลของJack</small><strong class="red" id="sOwnerDividend">฿0</strong></div>
+        <div class="sumitem"><small>ปันผลของพี่</small><strong class="red" id="sOwnerDividend">฿0</strong></div>
         <div class="sumitem"><small>ปันผลอีก 3 คน</small><strong class="red" id="sOthersDividend">฿0</strong><div class="hint" id="sEachOtherDividend">คนละ ฿0</div></div>
         <div class="sumitem"><small>ยอดจ่ายนายทุน</small><strong class="green" id="sInvestorPayout">฿0</strong></div>
       </div>
@@ -770,13 +726,13 @@ window.dispatchEvent(new Event("firebase-ready"));
             <thead><tr><th>ผู้รับ</th><th>ฐานคำนวณ</th><th class="num">อัตรา</th><th class="num">เงินปันผล</th></tr></thead>
             <tbody>
               <tr>
-                <td><span class="badge b-red" id="ownerDividendLabel">Jack · Easy Smart</span></td>
+                <td><span class="badge b-red" id="ownerDividendLabel">พี่ · Easy Smart</span></td>
                 <td id="easyBase">0 เครดิต</td>
                 <td class="num">10 บาท / เครดิต</td>
                 <td class="num money red" id="easyDividendRow">฿0</td>
               </tr>
               <tr>
-                <td><span class="badge b-blue" id="ownerSecondDividendLabel">Jack · ODM</span></td>
+                <td><span class="badge b-blue" id="ownerSecondDividendLabel">พี่ · ODM</span></td>
                 <td id="odmBase">กำไร ฿0</td>
                 <td class="num">5% ของกำไร ODM</td>
                 <td class="num money red" id="odmDividendRow">฿0</td>
@@ -806,7 +762,7 @@ window.dispatchEvent(new Event("firebase-ready"));
             </tbody>
           </table>
           <div class="note" style="margin-top:12px">
-            ของJackคิดแบบเฉพาะ: Easy Smart = 10 บาทต่อเครดิต และ ODM = 5% ของกำไร ODM ส่วนอีก 3 คน แต่ละคนได้ 5% ของกำไรรวมจากทุกหมวด
+            ของพี่คิดแบบเฉพาะ: Easy Smart = 10 บาทต่อเครดิต และ ODM = 5% ของกำไร ODM ส่วนอีก 3 คน แต่ละคนได้ 5% ของกำไรรวมจากทุกหมวด
           </div>
         </div>
 
@@ -816,7 +772,7 @@ window.dispatchEvent(new Event("firebase-ready"));
             <tbody>
               <tr><td>ทุนรวม</td><td class="num money" id="investCost">฿0</td></tr>
               <tr><td>บวก กำไรรวม</td><td class="num money green" id="investProfit">฿0</td></tr>
-              <tr><td>หัก ปันผลของJack</td><td class="num money red" id="investOwner">-฿0</td></tr>
+              <tr><td>หัก ปันผลของพี่</td><td class="num money red" id="investOwner">-฿0</td></tr>
               <tr><td>หัก ปันผลอีก 3 คน <small id="investEachOther" style="color:var(--muted)">(คนละ ฿0)</small></td><td class="num money red" id="investOthers">-฿0</td></tr>
               <tr style="font-size:16px"><td><strong>ยอดจ่ายนายทุน</strong></td><td class="num money green" id="investTotal">฿0</td></tr>
             </tbody>
@@ -890,12 +846,12 @@ window.dispatchEvent(new Event("firebase-ready"));
 
           <div id="easyDividendSettings">
             <div class="rule-row">
-              <div class="field"><label>Jack · Easy Smart Lock</label><input value="บาทต่อเครดิต" disabled></div>
+              <div class="field"><label>พี่ · Easy Smart Lock</label><input value="บาทต่อเครดิต" disabled></div>
               <div class="field"><label>อัตรา</label><input id="setEasyPerCredit" type="number" min="0"></div>
               <div class="field"><label>หน่วย</label><input value="บาท/เครดิต" disabled></div>
             </div>
             <div class="rule-row">
-              <div class="field"><label>Jack · ODM</label><input value="% จากกำไร ODM" disabled></div>
+              <div class="field"><label>พี่ · ODM</label><input value="% จากกำไร ODM" disabled></div>
               <div class="field"><label>อัตรา</label><input id="setEasyOdmPct" type="number" min="0"></div>
               <div class="field"><label>หน่วย</label><input value="%" disabled></div>
             </div>
@@ -908,26 +864,19 @@ window.dispatchEvent(new Event("firebase-ready"));
 
           <div id="enrollDividendSettings" style="display:none">
             <div class="rule-row">
-              <div class="field"><label>ของJack · วิธีคำนวณ</label>
-                <select id="setEnrollOwnerMethod">
-                  <option value="none">ไม่คิดปันผล</option>
-                  <option value="profit_percent">% จากกำไร</option>
-                  <option value="per_credit">บาทต่อเครดิต</option>
-                </select>
-              </div>
-              <div class="field"><label>อัตรา</label><input id="setEnrollOwnerRate" type="number" min="0"></div>
-              <div class="field"><label>ฐาน</label><input value="EnrollOne ทั้งโมดูล" disabled></div>
+              <div class="field"><label>พี่ · EnrollOne เครดิต</label><input value="บาทต่อเครดิต" disabled></div>
+              <div class="field"><label>อัตรา</label><input id="setEnrollPerCredit" type="number" min="0" step="0.01"></div>
+              <div class="field"><label>หน่วย</label><input value="บาท/เครดิต" disabled></div>
             </div>
             <div class="rule-row">
-              <div class="field"><label>ผู้รับปันผลอื่น · วิธีคำนวณ</label>
-                <select id="setEnrollOtherMethod">
-                  <option value="none">ไม่คิดปันผล</option>
-                  <option value="profit_percent">% จากกำไร</option>
-                  <option value="per_credit">บาทต่อเครดิต</option>
-                </select>
-              </div>
+              <div class="field"><label>พี่ · EnrollOne กำไร</label><input value="% จากกำไร EnrollOne" disabled></div>
+              <div class="field"><label>อัตรา</label><input id="setEnrollOwnerRate" type="number" min="0" step="0.01"></div>
+              <div class="field"><label>หน่วย</label><input value="%" disabled></div>
+            </div>
+            <div class="rule-row">
+              <div class="field"><label>ผู้รับปันผลอื่น</label><input value="% จากกำไรรวม" disabled></div>
               <div class="field"><label>จำนวนคน</label><input id="setEnrollPartnerCount" type="number" min="0"></div>
-              <div class="field"><label>อัตราต่อคน</label><input id="setEnrollOtherRate" type="number" min="0"></div>
+              <div class="field"><label>% ต่อคน</label><input id="setEnrollOtherRate" type="number" min="0" step="0.01"></div>
             </div>
           </div>
           <div class="actions"><button class="btn btn-primary" onclick="saveDividendMaster()">บันทึกสูตรปันผล</button></div>
@@ -961,7 +910,7 @@ window.dispatchEvent(new Event("firebase-ready"));
 
 
 <script>
-const key='easy-enroll-business-manager-online-cache-v1';
+const key='easy-enroll-business-manager-prod-v1';
 const defaultData={
   balance:459,
   sales:[
@@ -1031,73 +980,6 @@ const defaultData={
   }
 };
 let db=JSON.parse(localStorage.getItem(key)||'null')||defaultData;
-let cloudReady=false;
-let cloudUnsubscribe=null;
-let cloudWriteTimer=null;
-const CLOUD_COLLECTION='businessManager';
-const CLOUD_DOCUMENT='main';
-
-function cacheLocal(){ localStorage.setItem(key,JSON.stringify(db)); }
-
-function showCloudStatus(text,state='ok'){
-  const el=document.getElementById('cloudStatus');
-  if(!el)return;
-  el.textContent=text;
-  el.dataset.state=state;
-}
-
-async function cloudSaveNow(){
-  if(!cloudReady || !window.__cloud)return;
-  const {db:firestore,doc,setDoc}=window.__cloud;
-  const ref=doc(firestore,CLOUD_COLLECTION,CLOUD_DOCUMENT);
-  await setDoc(ref,JSON.parse(JSON.stringify(db)),{merge:false});
-}
-
-function scheduleCloudSave(){
-  cacheLocal();
-  clearTimeout(cloudWriteTimer);
-  cloudWriteTimer=setTimeout(()=>{
-    cloudSaveNow().catch(err=>{
-      console.error(err);
-      showCloudStatus('บันทึก Cloud ไม่สำเร็จ','error');
-    });
-  },250);
-}
-
-async function initCloud(){
-  if(!window.__cloud)return;
-  const {db:firestore,doc,getDoc,setDoc,onSnapshot}=window.__cloud;
-  const ref=doc(firestore,CLOUD_COLLECTION,CLOUD_DOCUMENT);
-  try{
-    const snap=await getDoc(ref);
-    if(snap.exists()){
-      db=snap.data();
-      cacheLocal();
-    }else{
-      await setDoc(ref,JSON.parse(JSON.stringify(db)));
-    }
-    cloudReady=true;
-    showCloudStatus('Cloud พร้อมใช้งาน','ok');
-    renderAll();
-
-    if(cloudUnsubscribe)cloudUnsubscribe();
-    cloudUnsubscribe=onSnapshot(ref,(snap)=>{
-      if(!snap.exists())return;
-      db=snap.data();
-      cacheLocal();
-      renderAll();
-      showCloudStatus('ข้อมูลซิงก์แล้ว','ok');
-    },()=>{
-      showCloudStatus('Cloud หลุดการเชื่อมต่อ','error');
-    });
-  }catch(err){
-    console.error(err);
-    showCloudStatus('ใช้ข้อมูลในเครื่องชั่วคราว','warn');
-  }
-}
-
-window.addEventListener('firebase-ready',initCloud);
-if(window.__cloud)initCloud();
 let editSaleId=null;
 let editOutId=null;
 if(!db.creditAdjustments) db.creditAdjustments=[];
@@ -1205,6 +1087,7 @@ if(db.dividendSettings.enrollOtherPct!=null && db.dividendSettings.enrollOtherRa
 }
 if(db.dividendSettings.easyPartnerCount==null)db.dividendSettings.easyPartnerCount=3;
 if(db.dividendSettings.enrollPartnerCount==null)db.dividendSettings.enrollPartnerCount=3;
+if(db.dividendSettings.enrollPerCredit==null)db.dividendSettings.enrollPerCredit=0;
 
 
 if(!db.easyCreditSnapshot) db.easyCreditSnapshot={
@@ -1308,7 +1191,7 @@ function makeId(prefix){
 db.sales=(db.sales||[]).map(x=>({...x,module:x.module||'easy',_id:x._id||makeId('sale')}));
 db.outstanding=(db.outstanding||[]).map(x=>({...x,module:x.module||'easy',_id:x._id||makeId('credit')}));
 localStorage.setItem(key,JSON.stringify(db));
-function save(){scheduleCloudSave();renderAll()}
+function save(){localStorage.setItem(key,JSON.stringify(db));renderAll()}
 function fmt(n){return new Intl.NumberFormat('th-TH',{maximumFractionDigits:0}).format(Number(n||0))}
 function money(n){return '฿'+fmt(n)}
 function displayDate(v){
@@ -1373,13 +1256,16 @@ function snapshotCurrentMonth(module,m){
     const odm=monthSales(m).filter(x=>x.channel==='ODM').map(calcSale);
     const easyCredits=easy.reduce((a,s)=>a+(+s.units||0),0);
     const odmGross=odm.reduce((a,s)=>a+(+s.profit||0),0);const odmProfit=odmGross-monthExpenseForCategory('easy',m,'ODM');
-    const ownerEasy=easyCredits*10;
-    const ownerOdm=odmProfit*0.05;
-    const eachOther=t.profit*0.05;
-    return {owner:ownerEasy+ownerOdm,others:eachOther*3,total:ownerEasy+ownerOdm+eachOther*3};
+    const ownerEasy=easyCredits*(+db.dividendSettings.easyPerCredit||0);
+    const ownerOdm=odmProfit*((+db.dividendSettings.easyOdmPct||0)/100);
+    const eachOther=t.profit*((+db.dividendSettings.easyOtherPct||0)/100);
+    const pc=+db.dividendSettings.easyPartnerCount||0; return {owner:ownerEasy+ownerOdm,others:eachOther*pc,total:ownerEasy+ownerOdm+eachOther*pc};
   })() : (()=> {
-    const owner=t.profit*0.05, each=t.profit*0.05;
-    return {owner,others:each*3,total:owner+each*3};
+    const units=t.units;
+    const owner=(units*(+db.dividendSettings.enrollPerCredit||0)) + (t.profit*((+db.dividendSettings.enrollOwnerRate||0)/100));
+    const each=t.profit*((+db.dividendSettings.enrollOtherRate||0)/100);
+    const pc=+db.dividendSettings.enrollPartnerCount||0;
+    return {owner,others:each*pc,total:owner+each*pc};
   })();
 
   const snap={
@@ -1496,16 +1382,15 @@ function renderSettings(){
   enrollDividendSettings.style.display=settingsModule==='enroll'?'block':'none';
   easyCreditSettingCard.style.display=settingsModule==='easy'?'block':'none';
   dividendSettingDesc.textContent=settingsModule==='easy'
-    ?'Easy Smart: Jackได้ 10 บาท/เครดิตฝั่ง '+categoryDisplayName('easy','Easy Smart Lock')+' + 5% กำไร '+categoryDisplayName('easy','ODM')+' และผู้รับอื่นคิดจากกำไรรวม'
-    :'EnrollOne: เลือกวิธีปันผลได้เอง เพื่อเปลี่ยนสูตรในอนาคตโดยไม่ต้องแก้โค้ด';
+    ?'Easy Smart: พี่ได้ 10 บาท/เครดิตฝั่ง '+categoryDisplayName('easy','Easy Smart Lock')+' + 5% กำไร '+categoryDisplayName('easy','ODM')+' และผู้รับอื่นคิดจากกำไรรวม'
+    :'EnrollOne: พี่ได้บาทต่อเครดิต + % จากกำไร EnrollOne และผู้รับปันผลอื่นคิดจากกำไรรวม';
 
   setEasyPerCredit.value=db.dividendSettings.easyPerCredit||0;
   setEasyOdmPct.value=db.dividendSettings.easyOdmPct||0;
   setEasyOtherPct.value=db.dividendSettings.easyOtherPct||0;
   setEasyPartnerCount.value=db.dividendSettings.easyPartnerCount||0;
-  setEnrollOwnerMethod.value=db.dividendSettings.enrollOwnerMethod||'none';
+  setEnrollPerCredit.value=db.dividendSettings.enrollPerCredit||0;
   setEnrollOwnerRate.value=db.dividendSettings.enrollOwnerRate||0;
-  setEnrollOtherMethod.value=db.dividendSettings.enrollOtherMethod||'none';
   setEnrollOtherRate.value=db.dividendSettings.enrollOtherRate||0;
   setEnrollPartnerCount.value=db.dividendSettings.enrollPartnerCount||0;
 
@@ -1667,9 +1552,10 @@ function saveDividendMaster(){
   db.dividendSettings.easyOdmPct=+setEasyOdmPct.value||0;
   db.dividendSettings.easyOtherPct=+setEasyOtherPct.value||0;
   db.dividendSettings.easyPartnerCount=+setEasyPartnerCount.value||0;
-  db.dividendSettings.enrollOwnerMethod=setEnrollOwnerMethod.value;
+  db.dividendSettings.enrollPerCredit=+setEnrollPerCredit.value||0;
+  db.dividendSettings.enrollOwnerMethod='profit_percent';
   db.dividendSettings.enrollOwnerRate=+setEnrollOwnerRate.value||0;
-  db.dividendSettings.enrollOtherMethod=setEnrollOtherMethod.value;
+  db.dividendSettings.enrollOtherMethod='profit_percent';
   db.dividendSettings.enrollOtherRate=+setEnrollOtherRate.value||0;
   db.dividendSettings.enrollPartnerCount=+setEnrollPartnerCount.value||0;
   save();alert('บันทึกสูตรปันผลแล้ว');
@@ -1850,32 +1736,24 @@ function renderDashboard(){
 
 }function renderTransactions(){
   const sorted=filteredSales().slice().sort((a,b)=>b.date.localeCompare(a.date));
-
-  allEasySales.innerHTML=sorted.filter(s=>s.channel==='Easy Smart Lock').map(s=>{
-    let c=calcSale(s);
-    return `<tr>
-      <td>${displayDate(s.date)}</td><td>${s.customer}</td><td class="num">${fmt(s.units)}</td>
-      <td class="num">${money(s.price)}</td><td class="num">${money(c.cost)}</td>
-      <td class="num green">${money(c.profit)}</td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-light" onclick="editSale('${s._id}')">แก้ไข</button>
-        <button class="btn btn-light" onclick="delSale('${s._id}')">ลบ</button>
-      </td>
-    </tr>`
-  }).join('')||'<tr><td colspan="7">ยังไม่มีรายการ</td></tr>';
-
-  allODMSales.innerHTML=sorted.filter(s=>s.channel==='ODM').map(s=>{
-    let c=calcSale(s);
-    return `<tr>
-      <td>${displayDate(s.date)}</td><td>${s.customer}</td><td class="num">${fmt(s.units)}</td>
-      <td class="num">${money(s.price)}</td><td class="num">${money(c.cost)}</td>
-      <td class="num green">${money(c.profit)}</td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-light" onclick="editSale('${s._id}')">แก้ไข</button>
-        <button class="btn btn-light" onclick="delSale('${s._id}')">ลบ</button>
-      </td>
-    </tr>`
-  }).join('')||'<tr><td colspan="7">ยังไม่มีรายการ</td></tr>';
+  const history=document.getElementById('salesHistoryByMonth');
+  if(history){
+    const grouped={};
+    sorted.forEach(x=>{const m=monthKey(x.date);(grouped[m]||(grouped[m]=[])).push(x)});
+    const monthKeys=Object.keys(grouped).sort().reverse();
+    history.innerHTML=monthKeys.map((m,idx)=>{
+      const rows=grouped[m];
+      const open=idx===0?'open':'';
+      const categoryCodes=activeModule==='easy'?['Easy Smart Lock','ODM','เคลม']:['EnrollOne'];
+      const cards=categoryCodes.map(code=>{
+        const arr=rows.filter(x=>x.channel===code);
+        if(!arr.length)return '';
+        const badge=activeModule==='easy'?(code==='Easy Smart Lock'?`ปันผล ${fmt(db.dividendSettings.easyPerCredit||0)} บาท / เครดิต`:code==='ODM'?`ปันผล ${fmt(db.dividendSettings.easyOdmPct||0)}% จากกำไร`:''):'EnrollOne';
+        return `<div class="card panel"><div class="panel-title"><span>${categoryDisplayName(activeModule,code)}</span>${badge?`<span class="badge ${code==='ODM'?'b-blue':'b-red'}">${badge}</span>`:''}</div><table><thead><tr><th>วันที่</th><th>ร้านค้า</th><th class="num">Unit</th><th class="num">ยอดขาย</th><th class="num">ต้นทุน</th><th class="num">กำไร</th><th></th></tr></thead><tbody>${arr.map(x=>{const c=calcSale(x);return `<tr><td>${displayDate(x.date)}</td><td>${x.customer}</td><td class="num">${fmt(x.units)}</td><td class="num">${money(x.price)}</td><td class="num">${money(c.cost)}</td><td class="num green">${money(c.profit)}</td><td style="white-space:nowrap"><button class="btn btn-light" onclick="editSale('${x._id}')">แก้ไข</button> <button class="btn btn-light" onclick="delSale('${x._id}')">ลบ</button></td></tr>`}).join('')}</tbody></table></div>`
+      }).join('');
+      return `<details class="sales-month-card" ${open}><summary><strong>${monthLabel(m)}</strong><span>${fmt(rows.reduce((a,x)=>a+(+x.units||0),0))} Unit · ${money(rows.reduce((a,x)=>a+(+x.price||0),0))}</span></summary><div class="grid2 sales-month-grid">${cards}</div></details>`;
+    }).join('')||'<div class="card panel">ยังไม่มีรายการ</div>';
+  }
 
   allOutstanding.innerHTML=filteredOutstanding().map(x=>`<tr>
     <td><span class="badge ${x.lot==='old'?'b-red':'b-blue'}">${x.lot==='old'?'ทุนเก่า':'ทุนใหม่'}</span></td>
@@ -2122,17 +2000,15 @@ function renderSummary(){
     investTotal.textContent=money(investorPayout);
   }else{
     const units=t.units;
-    const ownerDividend=computeRule(
-      db.dividendSettings.enrollOwnerMethod||'none',
-      +db.dividendSettings.enrollOwnerRate||0,
-      netProfit,units
-    );
-    const eachOtherDividend=computeRule(
-      db.dividendSettings.enrollOtherMethod||'none',
-      +db.dividendSettings.enrollOtherRate||0,
-      netProfit,units
-    );
+    const ownerPerCredit=+db.dividendSettings.enrollPerCredit||0;
+    const ownerProfitRate=+db.dividendSettings.enrollOwnerRate||0;
+    const otherRate=+db.dividendSettings.enrollOtherRate||0;
     const partnerCount=+db.dividendSettings.enrollPartnerCount||0;
+
+    const ownerCreditDividend=units*ownerPerCredit;
+    const ownerProfitDividend=netProfit*(ownerProfitRate/100);
+    const ownerDividend=ownerCreditDividend+ownerProfitDividend;
+    const eachOtherDividend=netProfit*(otherRate/100);
     const othersDividend=eachOtherDividend*partnerCount;
     const totalDividend=ownerDividend+othersDividend;
     const investorPayout=t.cost+netProfit-totalDividend;
@@ -2143,17 +2019,39 @@ function renderSummary(){
     sInvestorPayout.textContent=money(investorPayout);
 
     easyBase.textContent=fmt(units)+' เครดิต';
-    odmBase.textContent='กำไร '+money(t.profit);
-    allProfitBase1.textContent='EnrollOne '+money(t.profit);
-    allProfitBase2.textContent='EnrollOne '+money(t.profit);
-    allProfitBase3.textContent='EnrollOne '+money(t.profit);
-    easyDividendRow.textContent=money(ownerDividend);odmDividendRow.textContent=money(0);
-    other1DividendRow.textContent=money(eachOtherDividend);other2DividendRow.textContent=money(eachOtherDividend);other3DividendRow.textContent=money(eachOtherDividend);
+    odmBase.textContent='กำไร '+money(netProfit);
+    allProfitBase1.textContent='กำไรรวม '+money(netProfit);
+    allProfitBase2.textContent='กำไรรวม '+money(netProfit);
+    allProfitBase3.textContent='กำไรรวม '+money(netProfit);
+
+    const row1=easyDividendRow?.parentElement;
+    const row2=odmDividendRow?.parentElement;
+    if(row1){
+      const rate=row1.children?.[2];
+      if(rate)rate.textContent=fmt(ownerPerCredit)+' บาท / เครดิต';
+    }
+    if(row2){
+      row2.style.display='table-row';
+      const rate=row2.children?.[2];
+      if(rate)rate.textContent=fmt(ownerProfitRate)+'% ของกำไร EnrollOne';
+    }
+    [other1DividendRow,other2DividendRow,other3DividendRow].forEach(row=>{
+      const rate=row?.parentElement?.children?.[2];
+      if(rate)rate.textContent=fmt(otherRate)+'% ของกำไรรวม';
+    });
+
+    easyDividendRow.textContent=money(ownerCreditDividend);
+    odmDividendRow.textContent=money(ownerProfitDividend);
+    other1DividendRow.textContent=money(eachOtherDividend);
+    other2DividendRow.textContent=money(eachOtherDividend);
+    other3DividendRow.textContent=money(eachOtherDividend);
     totalDividendRow.textContent=money(totalDividend);
+
     investCost.textContent=money(t.cost);investProfit.textContent=money(netProfit);
     investOwner.textContent='-'+money(ownerDividend);investOthers.textContent='-'+money(othersDividend);
     investEachOther.textContent='('+partnerCount+' คน · คนละ '+money(eachOtherDividend)+')';
     investTotal.textContent=money(investorPayout);
+
   }
 
   fillMonthlyExpenseMasters();
@@ -2488,8 +2386,8 @@ function applyModuleUI(){
   document.getElementById('summaryTitle').textContent='สรุปสิ้นเดือน '+(easy?'Easy Smart':'EnrollOne');
   document.getElementById('summarySub').textContent=easy?'สรุปยอดขายและปันผลของ Easy Smart':'สรุปยอดขายและปันผลของ EnrollOne';
   const l1=document.getElementById('ownerDividendLabel'),l2=document.getElementById('ownerSecondDividendLabel');
-  if(l1)l1.textContent=easy?'Jack · '+categoryDisplayName('easy','Easy Smart Lock'):'Jack · '+categoryDisplayName('enroll','EnrollOne');
-  if(l2)l2.textContent=easy?'Jack · '+categoryDisplayName('easy','ODM'):'สูตรเสริม';
+  if(l1)l1.textContent=easy?'พี่ · '+categoryDisplayName('easy','Easy Smart Lock'):'พี่ · '+categoryDisplayName('enroll','EnrollOne')+' เครดิต';
+  if(l2)l2.textContent=easy?'พี่ · '+categoryDisplayName('easy','ODM'):'พี่ · '+categoryDisplayName('enroll','EnrollOne')+' กำไร';
 
   renderSaleCategoryOptions();
   const impBtn=document.getElementById('creditImportTabBtn');
@@ -2566,43 +2464,6 @@ monthSelect.onchange=renderDashboard;summaryMonth.onchange=()=>{renderSummary();
 saleDate.value='07/08/2026';outDate.value='07/08/2026';if(document.getElementById('expenseDate'))expenseDate.value='07/08/2026';if(document.getElementById('importDate'))importDate.value='07/08/2026';
 renderAll();
 </script>
-<div style="display:none" id="appBuild">Production v1.2.2 · EnrollOne Full Menu Minus Top-up</div>
-
-<script>
-(function(){
-  const PIN_HASH="82b87b56b096bcf4be784d993717c10443d843ebc880e4dae7cd5d049240d451";
-  async function sha256(text){
-    const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));
-    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
-  }
-  function unlock(){
-    document.getElementById("pinGate").style.display="none";
-    sessionStorage.setItem("easyEnrollUnlocked","1");
-  }
-  async function checkPin(){
-    const input=document.getElementById("pinInput");
-    const err=document.getElementById("pinError");
-    err.textContent="";
-    if(await sha256(input.value)===PIN_HASH){
-      unlock();
-    }else{
-      input.value="";
-      err.textContent="PIN ไม่ถูกต้อง";
-      input.focus();
-    }
-  }
-  window.addEventListener("DOMContentLoaded",()=>{
-    if(sessionStorage.getItem("easyEnrollUnlocked")==="1"){
-      unlock();
-      return;
-    }
-    const input=document.getElementById("pinInput");
-    document.getElementById("pinEnterBtn").addEventListener("click",checkPin);
-    input.addEventListener("keydown",e=>{ if(e.key==="Enter") checkPin(); });
-    input.focus();
-  });
-})();
-</script>
-
+<div style="display:none" id="appBuild">Online v1.1.4 · Fix #1 #2 #3</div>
 </body>
 </html>
