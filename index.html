@@ -1,0 +1,2608 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#e5252a">
+<title>Easy Smart & EnrollOne Online</title>
+<style>
+:root{
+  --bg:#f5f7fb; --card:#fff; --text:#172033; --muted:#748099;
+  --red:#e5252a; --red2:#ff565a; --line:#e8edf4; --green:#16a36a;
+  --blue:#2f6fed; --amber:#f59e0b; --shadow:0 8px 30px rgba(30,45,70,.06);
+}
+*{box-sizing:border-box} body{margin:0;font-family:"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--text)}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:24px 14px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;padding:0 8px 24px}
+.logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;display:grid;place-items:center;font-size:22px}
+.module-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 16px}
+.module-switch button{border:1px solid var(--line);background:#fff;padding:9px 6px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;color:#596579}
+.module-switch button.active{background:#172033;color:#fff;border-color:#172033}
+.nav button{width:100%;border:0;background:transparent;padding:13px 14px;border-radius:12px;text-align:left;font-size:15px;margin:5px 0;cursor:pointer;color:#536078}
+.nav button.active{background:#fff0f0;color:var(--red);font-weight:700}
+.main{padding:24px 28px 50px;max-width:1500px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+h1{font-size:26px;margin:0}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.select,.input{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;font-size:14px;outline:none}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.kpi{padding:17px}.kpi .label{font-size:12px;color:var(--muted)}.kpi .value{font-size:22px;font-weight:800;margin-top:8px}.kpi .hint{font-size:11px;margin-top:7px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.panel{padding:18px}.panel-title{display:flex;justify-content:space-between;align-items:center;font-weight:800;margin-bottom:13px}
+table{width:100%;border-collapse:collapse;font-size:13px} th{color:var(--muted);font-weight:600;text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
+td{padding:11px 8px;border-bottom:1px solid #f1f4f8;vertical-align:middle} .num{text-align:right;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700}
+.b-red{background:#fff0f0;color:var(--red)} .b-blue{background:#edf3ff;color:var(--blue)} .b-green{background:#eaf8f2;color:var(--green)} .b-amber{background:#fff6df;color:#b77900}
+.money{font-weight:800}.green{color:var(--green)}.red{color:var(--red)}
+.oldnew{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lot{border:1px solid var(--line);border-radius:13px;overflow:hidden}.lot h3{font-size:13px;margin:0;padding:10px 12px}.old h3{background:#fff0f0;color:var(--red)}.new h3{background:#edf3ff;color:var(--blue)}
+.totalbar{display:flex;justify-content:space-between;padding:13px 14px;background:#fafbfc;border-radius:11px;margin-top:12px;font-weight:800}
+.credit-ledger{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.credit-mini{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px}
+.credit-mini small{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}
+.credit-mini strong{font-size:21px}
+.credit-mini.redish{background:#fff7f7}
+.credit-mini.greenish{background:#f2fbf7}
+.credit-mini.yellowish{background:#fffbea}
+.credit-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center;margin-top:14px}
+.credit-flow .box{border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px}
+.credit-flow .box small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}
+.credit-flow .box strong{font-size:18px}
+.credit-flow .arrow{font-size:20px;color:#9aa4b6}
+.credit-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.credit-line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.credit-line.total{font-weight:800;font-size:15px;border-top:2px solid var(--line);border-bottom:0;margin-top:6px;padding-top:12px}
+.credit-line.balance{background:#fff9a8;padding:12px;border-radius:9px;border:0;font-weight:900;font-size:16px;margin-top:10px}
+.section{display:none}.section.active{display:block}
+.form-card{padding:18px;margin-bottom:16px}.form-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:end}
+.field label{font-size:11px;color:var(--muted);display:block;margin-bottom:6px}.field input,.field select{width:100%;border:1px solid var(--line);padding:10px;border-radius:9px;background:#fff}
+.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:700;cursor:pointer}.btn-primary{background:var(--red);color:#fff}.btn-light{background:#eef2f7;color:#435069}
+.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs button{border:1px solid var(--line);background:#fff;padding:9px 13px;border-radius:9px;cursor:pointer}.tabs button.active{background:#172033;color:#fff}
+.summaryline{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}.sumitem{padding:15px;border:1px solid var(--line);border-radius:12px;background:#fff}.sumitem small{color:var(--muted)}.sumitem strong{display:block;font-size:19px;margin-top:6px}
+.note{font-size:12px;color:var(--muted);padding:12px;background:#fff9e9;border:1px solid #ffe7a5;border-radius:10px}
+.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.setting-section{margin-top:0}
+.settings-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}
+.settings-module-switch{display:flex;gap:8px}
+.settings-module-switch button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer}
+.settings-module-switch button.active{background:#172033;color:#fff;border-color:#172033}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.settings-card{padding:18px}
+.settings-card .desc{font-size:12px;color:var(--muted);margin-top:-5px;margin-bottom:14px}
+.inline-form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}.edit-note{font-size:11px;color:var(--muted);margin-top:6px}
+.rule-row{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px;align-items:end;margin-bottom:10px}
+.status-box{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.status-item{padding:13px;border:1px solid var(--line);border-radius:11px;background:#fafbfc}
+.status-item small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}
+.status-item strong{font-size:18px}
+@media(max-width:1100px){.settings-grid{grid-template-columns:1fr}.status-box{grid-template-columns:1fr}}
+
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+@media(max-width:1250px){.grid2{grid-template-columns:1fr}.summaryline{grid-template-columns:repeat(3,1fr)!important}.credit-ledger{grid-template-columns:repeat(2,1fr)}.credit-flow{grid-template-columns:1fr}.credit-flow .arrow{display:none}}
+@media(max-width:1050px){.app{grid-template-columns:82px 1fr}.brand span,.nav button span{display:none}.kpis{grid-template-columns:repeat(3,1fr)}.form-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ===== Production UI / CI layer ===== */
+:root{
+  --accent:#e5252a;
+  --accent-strong:#b9151a;
+  --accent-soft:#fff1f2;
+  --accent-line:#ffd9dc;
+  --brand-gradient:linear-gradient(135deg,#e5252a 0%,#b9151a 100%);
+  --surface:#ffffff;
+  --surface-2:#f7f8fb;
+  --surface-3:#f1f4f8;
+  --ink:#111827;
+  --ink-soft:#475569;
+  --line-strong:#dfe5ee;
+}
+body[data-module="enroll"]{
+  --accent:#004096;
+  --accent-strong:#40044c;
+  --accent-soft:#eef7ff;
+  --accent-line:#cdeeff;
+  --brand-gradient:linear-gradient(135deg,#40044c 0%,#004096 52%,#34cfe6 100%);
+}
+html{background:#eef1f6}
+body{
+  background:
+    radial-gradient(circle at 92% 0%, rgba(229,37,42,.055), transparent 28%),
+    #f4f6f9;
+  color:var(--ink);
+  letter-spacing:.01em;
+}
+body[data-module="enroll"]{
+  background:
+    radial-gradient(circle at 90% 0%, rgba(52,207,230,.12), transparent 26%),
+    radial-gradient(circle at 72% 0%, rgba(64,4,76,.055), transparent 22%),
+    #f4f7fb;
+}
+.app{grid-template-columns:244px minmax(0,1fr)}
+.sidebar{
+  width:auto;
+  padding:22px 16px 18px;
+  border-right:1px solid #e8ecf2;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(16px);
+  box-shadow:8px 0 30px rgba(15,23,42,.025);
+}
+.brand{
+  margin:0 2px 16px;
+  padding:7px 7px 15px;
+  gap:12px;
+  border-bottom:1px solid #eef1f5;
+}
+.logo{
+  width:43px;height:43px;border-radius:14px;
+  background:var(--brand-gradient);
+  box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 22%,transparent);
+  font-size:20px;font-weight:900;
+}
+#brandText{font-size:17px;line-height:1.15;color:#101828}
+#moduleContext{
+  margin:0 3px 14px;
+  padding:8px 10px!important;
+  border-radius:9px;
+  background:var(--accent-soft);
+  color:var(--accent)!important;
+  font-weight:600;
+}
+.module-switch{
+  gap:8px;
+  padding:0 2px;
+  margin-bottom:12px;
+}
+.module-switch button{
+  min-height:50px;
+  border:1px solid #e6eaf0;
+  background:#fff;
+  color:#667085;
+  border-radius:12px;
+  font-size:12px;
+  transition:.18s ease;
+  box-shadow:0 2px 6px rgba(15,23,42,.025);
+}
+#moduleEasyBtn{border-left:3px solid #e5252a}
+#moduleEnrollBtn{border-left:3px solid #004096}
+.module-switch button.active{
+  border-color:transparent;
+  color:#fff;
+  transform:translateY(-1px);
+  box-shadow:0 7px 18px rgba(15,23,42,.12);
+}
+#moduleEasyBtn.active{background:linear-gradient(135deg,#e5252a,#b9151a)}
+#moduleEnrollBtn.active{background:linear-gradient(135deg,#40044c,#004096 58%,#34cfe6)}
+.nav{padding-top:5px}
+.nav button{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 13px;
+  margin:5px 0;
+  border-radius:11px;
+  color:#5d687b;
+  font-size:14px;
+  transition:.15s ease;
+}
+.nav button:hover{background:#f6f8fb;color:#1f2937}
+.nav button.active{
+  color:var(--accent);
+  background:var(--accent-soft);
+  font-weight:750;
+}
+.nav button.active:before{
+  content:"";
+  position:absolute;
+  left:0;top:9px;bottom:9px;width:3px;
+  border-radius:0 3px 3px 0;
+  background:var(--brand-gradient);
+}
+.main{
+  max-width:1540px;
+  padding:26px 30px 60px;
+}
+.top{
+  min-height:64px;
+  margin-bottom:18px;
+  padding:0 2px;
+}
+.top h1,.settings-head h1{font-size:25px;letter-spacing:-.02em;color:#101828}
+.sub{color:#8490a4;font-size:12px}
+.select,.input,.field input,.field select{
+  min-height:40px;
+  border:1px solid #dfe5ee;
+  background:#fff;
+  border-radius:10px;
+  color:#263244;
+  transition:.15s ease;
+}
+.select:focus,.input:focus,.field input:focus,.field select:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 10%,transparent);
+  outline:none;
+}
+.card{
+  border:1px solid #e5eaf1;
+  border-radius:16px;
+  background:rgba(255,255,255,.97);
+  box-shadow:0 5px 22px rgba(15,23,42,.045);
+}
+.panel{padding:18px 19px}
+.panel-title{
+  min-height:30px;
+  margin-bottom:13px;
+  color:#172033;
+  font-size:14px;
+}
+.kpis{gap:12px}
+.kpi{
+  position:relative;
+  overflow:hidden;
+  min-height:116px;
+  padding:17px 17px 15px;
+}
+.kpi:after{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;height:3px;
+  background:var(--brand-gradient);
+  opacity:.85;
+}
+.kpi .label{font-size:11px;color:#7d889d}
+.kpi .value{font-size:23px;letter-spacing:-.02em;color:#111827}
+.kpi .value.green{color:#109568}
+.kpi .value.red{color:#df2632}
+.kpi .hint{font-size:10.5px}
+.btn{
+  min-height:38px;
+  border-radius:10px;
+  padding:9px 13px;
+  transition:.15s ease;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--brand-gradient);color:#fff;box-shadow:0 5px 13px color-mix(in srgb,var(--accent) 18%,transparent)}
+.btn-blue{background:var(--accent-soft);color:var(--accent)}
+.btn-dark{background:#172033}
+.btn-light{background:#f1f4f8;color:#48566b}
+.tabs{
+  padding:5px;
+  gap:5px;
+  border:1px solid #e3e8ef;
+  background:#eef2f6;
+  border-radius:12px;
+  width:max-content;
+}
+.tabs button{
+  border:0;
+  background:transparent;
+  border-radius:9px;
+  padding:9px 13px;
+  color:#6a7588;
+  font-weight:650;
+}
+.tabs button.active{
+  background:#fff;
+  color:var(--accent);
+  box-shadow:0 2px 9px rgba(15,23,42,.08);
+}
+.form-card{
+  border-top:3px solid var(--accent);
+  padding:18px 19px;
+}
+.field label{
+  color:#6e7a8e;
+  font-weight:600;
+}
+table{font-size:12.5px}
+th{
+  padding:10px 9px;
+  border-bottom:1px solid #dde4ed;
+  color:#8792a5;
+  background:#fafbfc;
+  font-size:11px;
+  text-transform:none;
+}
+td{padding:11px 9px;border-bottom:1px solid #edf0f4}
+tbody tr:hover td{background:#fafcff}
+.badge{padding:5px 8px;font-size:10.5px}
+.b-red{background:#fff0f1;color:#d92732}
+.b-blue{background:#edf5ff;color:#175faa}
+.b-green{background:#ecf9f3;color:#13885f}
+.b-amber{background:#fff7e6;color:#a96d00}
+.totalbar{
+  border:1px solid #e9edf2;
+  background:#f8fafc;
+  border-radius:11px;
+}
+.credit-mini{
+  border-color:#e7ecf2!important;
+  background:#fafbfd!important;
+}
+.credit-mini.greenish{background:#f0fbf6!important;border-color:#dff3e8!important}
+.credit-mini.yellowish{
+  background:linear-gradient(135deg,#fff8cf,#fff4a6)!important;
+  border-color:#f7e993!important;
+}
+.credit-flow .box{border-color:#e6ebf2}
+.credit-flow .box.redish{background:#fff7f7;border-color:#ffe1e3}
+.settings-head{
+  position:sticky;
+  top:0;
+  z-index:8;
+  padding:10px 0 12px;
+  background:linear-gradient(#f4f6f9 76%,rgba(244,246,249,0));
+}
+.settings-module-switch button.active{background:var(--brand-gradient);border-color:transparent}
+.settings-card{border-top:3px solid color-mix(in srgb,var(--accent) 70%,#fff)}
+.status-item{background:#f8fafc;border-color:#e6ebf2}
+.note{background:#fffaf0;border-color:#f6e2ad;color:#7d5d10}
+#dashboardCreditHistoryCard{
+  border-left:4px solid var(--accent);
+}
+body[data-module="enroll"] #dashboardCreditHistoryCard{display:none!important}
+body[data-module="enroll"] #easyCreditSummaryPanel{display:none!important}
+body[data-module="enroll"] .b-red{background:#f2effa;color:#5a1970}
+body[data-module="enroll"] .btn-primary{background:var(--brand-gradient)}
+body[data-module="enroll"] .nav button.active{color:#004096}
+body[data-module="enroll"] .kpi:after{background:var(--brand-gradient)}
+@media(max-width:1100px){
+  .app{grid-template-columns:84px minmax(0,1fr)}
+  .sidebar{padding-left:10px;padding-right:10px}
+  .brand{justify-content:center}.brand span,#moduleContext,.nav button span{display:none}
+  .module-switch{grid-template-columns:1fr}
+  .module-switch button{font-size:0;min-height:42px}
+  #moduleEasyBtn:after{content:"E";font-size:13px}
+  #moduleEnrollBtn:after{content:"O";font-size:13px}
+  .main{padding:22px 18px 50px}
+}
+
+
+.cloud-status{margin:0 3px 8px;padding:7px 9px;border-radius:9px;font-size:10.5px;font-weight:700;text-align:center;background:#fff7df;color:#946200;border:1px solid #f7e7ad}
+.cloud-status[data-state="ok"]{background:#edf9f3;color:#12805a;border-color:#d9efe5}
+.cloud-status[data-state="error"]{background:#fff0f1;color:#cf2630;border-color:#ffd9dc}
+.pin-gate{position:fixed;inset:0;z-index:99999;background:rgba(10,14,22,.96);display:flex;align-items:center;justify-content:center;padding:20px}
+.pin-card{width:min(360px,100%);background:#fff;border-radius:18px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.35)}
+.pin-card h2{margin:0 0 6px;font-size:22px;color:#111827}
+.pin-card p{margin:0 0 16px;color:#6b7280;font-size:13px}
+.pin-card input{width:100%;box-sizing:border-box;font-size:28px;letter-spacing:8px;text-align:center;padding:12px;border:1px solid #d1d5db;border-radius:12px}
+.pin-card button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:12px;background:#111827;color:#fff;font-weight:700;cursor:pointer}
+.pin-error{min-height:18px;margin-top:8px;text-align:center;color:#dc2626;font-size:12px}
+
+</style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const firestore = getFirestore(app);
+window.__cloud = { db: firestore, doc, getDoc, setDoc, onSnapshot };
+window.dispatchEvent(new Event("firebase-ready"));
+</script>
+
+</head>
+<body data-module="easy">
+<div id="pinGate" class="pin-gate">
+  <div class="pin-card">
+    <h2>เข้าสู่ระบบ</h2>
+    <p>กรอก PIN เพื่อเข้าใช้งาน</p>
+    <input id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
+    <button id="pinEnterBtn" type="button">เข้าใช้งาน</button>
+    <div id="pinError" class="pin-error"></div>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo" id="brandLogo">E</div><span id="brandText">Easy Smart</span></div>
+    <div class="module-switch">
+      <button id="moduleEasyBtn" class="active" onclick="switchModule('easy')">Easy Smart</button>
+      <button id="moduleEnrollBtn" onclick="switchModule('enroll')">EnrollOne</button>
+    </div>
+    <div id="cloudStatus" class="cloud-status" data-state="warn">กำลังเชื่อม Cloud…</div>
+    <div id="moduleContext" style="font-size:11px;color:#8a94a8;padding:0 8px 10px">ระบบ Easy Smart แยกอิสระ</div>
+    <div class="nav">
+      <button class="active" data-page="dashboard">📊 <span>ภาพรวม</span></button>
+      <button data-page="transactions">🧾 <span>บันทึกรายการ</span></button>
+      <button data-page="summary">💰 <span>สรุปสิ้นเดือน</span></button>
+      <button data-page="settings">⚙️ <span>ตั้งค่า</span></button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section id="dashboard" class="section active">
+      <div class="top">
+        <div><h1 id="dashboardTitle">ภาพรวม Easy Smart</h1><div class="sub" id="dashboardSub">ยอดขาย เครดิต และกำไร · ข้อมูลต่อเนื่องรายเดือน</div></div>
+        <select id="monthSelect" class="select"></select>
+      </div>
+
+      <div class="kpis">
+        <div class="card kpi"><div class="label">ยอดขายรวม</div><div class="value" id="kSales">฿0</div></div>
+        <div class="card kpi"><div class="label">ทุนรวม</div><div class="value" id="kCost">฿0</div></div>
+        <div class="card kpi"><div class="label">กำไรรวม</div><div class="value green" id="kProfit">฿0</div></div>
+        <div class="card kpi"><div class="label">ขายไปทั้งหมด</div><div class="value" id="kUnits">0</div><div class="hint">Unit</div></div>
+        <div class="card kpi"><div class="label">เครดิตคงค้าง</div><div class="value red" id="kOutstanding">0</div><div class="hint">Unit · แยกตามต้นทุน</div></div>
+        <div class="card kpi"><div class="label">เครดิตคงเหลือ</div><div class="value" id="kBalance">459</div><div class="hint">อ้างอิงชีตล่าสุด</div></div>
+      </div>
+
+      <div id="easyCreditSummaryPanel" class="card panel" style="margin-bottom:16px">
+        <div class="panel-title">
+          <span>สรุปเครดิต Easy Smart</span>
+          <div class="controls">
+            <span class="badge b-green">ฐานเริ่มต้นจาก ก.ค. 2569</span>
+            <button class="btn btn-light" onclick="goToCreditImport()">+ เติมเครดิต</button>
+          </div>
+        </div>
+
+        <div class="credit-ledger">
+          <div class="credit-mini">
+            <small>เครดิตยกมา</small>
+            <strong id="creditOpening">0</strong>
+          </div>
+          <div class="credit-mini">
+            <small>ยอดค้างชำระยกมา</small>
+            <strong id="creditCarryLongterm">0</strong>
+          </div>
+          <div class="credit-mini greenish">
+            <small>เติมเครดิตเดือนนี้</small>
+            <strong id="creditImported">0</strong>
+          </div>
+          <div class="credit-mini yellowish">
+            <small>เครดิตคงเหลือ</small>
+            <strong id="creditBalance">0</strong>
+          </div>
+        </div>
+
+        <div class="credit-flow">
+          <div class="box">
+            <small>เครดิตรวมที่มี</small>
+            <strong id="creditAvailable">0</strong>
+          </div>
+          <div class="arrow">−</div>
+          <div class="box redish">
+            <small>ยอดค้างชำระล่าสุด</small>
+            <strong class="red" id="creditLongtermNow">-0</strong>
+          </div>
+          <div class="arrow">−</div>
+          <div class="box redish">
+            <small>ขายออกเดือนนี้</small>
+            <strong class="red"><span id="creditSoldEasy">-0</span> / <span id="creditSoldODM">-0</span></strong>
+            <div class="hint">Easy Smart / ODM</div>
+          </div>
+        </div>
+
+        <div class="totalbar">
+          <span>ยอดยกไปเดือนใหม่</span>
+          <span><strong id="nextMonthCarry">0 เครดิต</strong></span>
+        </div>
+        <div id="creditAdjustmentNet" style="display:none">0</div>
+      </div>
+
+      <div class="grid2">
+        <div class="card panel">
+          <div class="panel-title"><span>สรุปยอดขาย แยกตามฝั่ง</span></div>
+          <table>
+            <thead><tr><th>ฝั่ง</th><th class="num">Unit</th><th class="num">ยอดขาย</th><th class="num">ทุน</th><th class="num">กำไร</th></tr></thead>
+            <tbody id="channelSummary"></tbody>
+          </table>
+        </div>
+
+        <div class="card panel">
+          <div class="panel-title">
+            <span>รายละเอียดเครดิตคงค้าง</span>
+            <span class="badge b-red">Long-term Credit</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>ร้านค้า</th>
+                <th class="num">ทุนเก่า</th>
+                <th class="num">ทุนใหม่</th>
+                <th class="num">รวม</th>
+              </tr>
+            </thead>
+            <tbody id="creditNameRows"></tbody>
+          </table>
+          <div class="totalbar">
+            <span>เครดิตคงค้างรวม</span>
+            <span id="outTotal">0 Unit</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card panel">
+          <div class="panel-title"><span id="easySalesCardTitle">รายการขาย Easy Smart Lock</span><button class="btn btn-light" onclick="goPage('transactions')">+ เพิ่มรายการ</button></div>
+          <table>
+            <thead><tr><th>วันที่</th><th>ร้านค้า</th><th class="num">เครดิต</th><th class="num">ยอดขาย</th><th class="num">ต้นทุน</th><th class="num">กำไร</th></tr></thead>
+            <tbody id="recentEasy"></tbody>
+          </table>
+        </div>
+        <div class="card panel">
+          <div class="panel-title"><span id="odmSalesCardTitle">รายการขาย ODM</span><button class="btn btn-light" onclick="goPage('transactions')">+ เพิ่มรายการ</button></div>
+          <table>
+            <thead><tr><th>วันที่</th><th>ร้านค้า</th><th class="num">Unit</th><th class="num">ยอดขาย</th><th class="num">ต้นทุน</th><th class="num">กำไร</th></tr></thead>
+            <tbody id="recentODM"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="dashboardCreditHistoryCard" class="card panel" style="margin-bottom:16px">
+        <div class="panel-title">
+          <span>ประวัติการเติมเครดิตเดือนนี้</span>
+          <div class="controls">
+            <span class="badge b-blue" id="creditHistoryMonthBadge">เดือนที่เลือก</span>
+            <button class="btn btn-light" onclick="goToCreditImport()">+ เติมเครดิต</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>วันที่</th>
+              <th>ประเภท</th>
+              <th>เติมให้ ODM</th>
+              <th class="num">เครดิต</th>
+              <th class="num">ต้นทุน/เครดิต</th>
+              <th class="num">มูลค่าทุน</th>
+              <th>หมายเหตุ</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="dashboardCreditImportHistoryRows"></tbody>
+        </table>
+      </div>
+
+
+      <div class="card panel" style="margin-bottom:16px">
+        <div class="panel-title">
+          <span>ค่าใช้จ่ายเดือนนี้</span>
+          <button class="btn btn-light" onclick="goToExpenseTab()">+ บันทึกค่าใช้จ่าย</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>วันที่</th>
+              <th>รายการ</th>
+              <th>หักจากหมวด</th>
+              <th class="num">จำนวนเงิน</th>
+              <th>หมายเหตุ</th>
+            </tr>
+          </thead>
+          <tbody id="dashboardExpenseRows"></tbody>
+        </table>
+        <div class="totalbar">
+          <span>ค่าใช้จ่ายรวมเดือนนี้</span>
+          <span id="dashboardExpenseTotal">฿0</span>
+        </div>
+      </div>
+
+    </section>
+
+    <section id="transactions" class="section">
+      <div class="top"><div><h1 id="transactionTitle">บันทึกรายการ Easy Smart</h1><div class="sub" id="transactionSub">รายการขายและเครดิตของ Easy Smart</div></div></div>
+
+      <div class="tabs">
+        <button class="active" data-tab="sale">บันทึกการขาย</button>
+        <button id="expenseTabBtn" data-tab="expense">ค่าใช้จ่าย</button>
+        <button data-tab="outstanding">เครดิตคงค้าง</button>
+        <button id="creditImportTabBtn" data-tab="creditImport">เติมเครดิต</button>
+      </div>
+
+      <div id="saleTab">
+        <div class="card form-card">
+          <div class="panel-title">เพิ่ม / แก้ไขรายการขาย</div>
+          <div class="form-grid">
+            <div class="field"><label>วันที่</label><input id="saleDate" type="text" inputmode="numeric" placeholder="dd/mm/yyyy"></div>
+            <div class="field"><label>หมวด</label><select id="saleChannel"><option value="Easy Smart Lock">Easy Smart Lock</option><option value="ODM">ODM</option><option value="เคลม">เคลม</option></select></div>
+            <div class="field"><label>ร้านค้า</label>
+  <input id="saleCustomer" list="customerMasterList" placeholder="เลือกหรือพิมพ์ชื่อร้านค้า">
+  <datalist id="customerMasterList"></datalist>
+</div>
+            <div class="field"><label>จำนวน Unit</label><input id="saleUnits" type="number" min="0"></div>
+            <div class="field"><label>ราคาขายรวม</label><input id="salePrice" type="number" min="0"></div>
+            <div class="field"><label>ชุดต้นทุน</label>
+  <select id="saleCostProfile" onchange="applySelectedCostProfile()"></select>
+  <div class="hint" id="saleCostHint">ใช้ค่าเริ่มต้นของโมดูล</div>
+  <input id="saleCpu" type="hidden" value="60">
+</div>
+          </div>
+          <div class="actions">
+  <button id="cancelSaleEdit" class="btn btn-light" style="display:none" onclick="cancelSaleEdit()">ยกเลิก</button>
+  <button id="saleSaveBtn" class="btn btn-primary" onclick="addSale()">บันทึกการขาย</button>
+</div>
+        </div>
+
+        <div class="grid2">
+          <div class="card panel">
+            <div class="panel-title"><span>Easy Smart Lock</span><span class="badge b-red">ปันผล 10 บาท / เครดิต</span></div>
+            <table>
+              <thead><tr><th>วันที่</th><th>ร้านค้า</th><th class="num">เครดิต</th><th class="num">ยอดขาย</th><th class="num">ต้นทุน</th><th class="num">กำไร</th><th></th></tr></thead>
+              <tbody id="allEasySales"></tbody>
+            </table>
+          </div>
+          <div class="card panel">
+            <div class="panel-title"><span>ODM</span><span class="badge b-blue">ปันผล 5% จากกำไร</span></div>
+            <table>
+              <thead><tr><th>วันที่</th><th>ร้านค้า</th><th class="num">Unit</th><th class="num">ยอดขาย</th><th class="num">ต้นทุน</th><th class="num">กำไร</th><th></th></tr></thead>
+              <tbody id="allODMSales"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="outstandingTab" style="display:none">
+        <div class="card form-card">
+          <div class="panel-title">เพิ่ม / แก้ไขยอดที่เครดิตระยะยาว</div>
+          <div class="form-grid">
+            <div class="field"><label>ชุดต้นทุน</label><select id="outLot"><option value="old">ทุนเก่า</option><option value="new">ทุนใหม่</option></select></div>
+            <div class="field"><label>ร้านค้า / คู่ค้า</label>
+  <input id="outName" list="customerMasterList" placeholder="เลือกหรือพิมพ์ชื่อร้านค้า">
+</div>
+            <div class="field"><label>จำนวนเครดิต</label><input id="outUnits" type="number" min="0"></div>
+            <div class="field"><label>ต้นทุน / เครดิต</label><input id="outCpu" type="number" min="0" placeholder="ใส่ต้นทุนของชุดนี้"></div>
+            <div class="field"><label>วันที่</label><input id="outDate" type="text" inputmode="numeric" placeholder="dd/mm/yyyy"></div>
+            <div class="field" style="display:flex;gap:8px">
+  <button id="cancelOutEdit" class="btn btn-light" style="display:none;flex:1" onclick="cancelOutEdit()">ยกเลิก</button>
+  <button id="outSaveBtn" class="btn btn-primary" style="flex:1" onclick="addOutstanding()">บันทึกเครดิตคงค้าง</button>
+</div>
+          </div>
+        </div>
+
+        <div class="card panel">
+          <div class="panel-title">เครดิตคงค้างทั้งหมด</div>
+          <table>
+            <thead><tr><th>กลุ่ม</th><th>ร้านค้า/คู่ค้า</th><th class="num">Unit</th><th class="num">ต้นทุน/Unit</th><th>วันที่</th><th>สถานะ</th><th></th></tr></thead>
+            <tbody id="allOutstanding"></tbody>
+          </table>
+        </div>
+
+        <div id="adjustCreditPanel" class="card form-card" style="display:none;margin-top:16px">
+          <div class="panel-title">
+            <span>ปรับยอดเครดิต</span>
+            <button class="btn btn-light" onclick="cancelAdjustCredit()">ปิด</button>
+          </div>
+          <div class="form-grid" style="grid-template-columns:1.4fr 1fr 1fr 2fr auto">
+            <div class="field"><label>ร้านค้า / คู่ค้า</label><input id="adjustName" disabled></div>
+            <div class="field"><label>เครดิตปัจจุบัน</label><input id="adjustCurrent" disabled></div>
+            <div class="field"><label>ยอดเครดิตใหม่</label><input id="adjustNew" type="number" min="0"></div>
+            <div class="field"><label>เหตุผล / หมายเหตุ</label><input id="adjustNote" placeholder="เช่น ปรับยอดตามการตรวจสอบ"></div>
+            <div class="field"><button class="btn btn-primary" style="width:100%" onclick="saveCreditAdjustment()">บันทึกการปรับ</button></div>
+          </div>
+        </div>
+
+        <div class="card panel" style="margin-top:16px">
+          <div class="panel-title">ประวัติการปรับเครดิต</div>
+          <table>
+            <thead><tr><th>วันที่ปรับ</th><th>ร้านค้า</th><th class="num">ก่อนปรับ</th><th class="num">ปรับเพิ่ม/ลด</th><th class="num">หลังปรับ</th><th>หมายเหตุ</th></tr></thead>
+            <tbody id="creditAdjustmentRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <div id="expenseTab" style="display:none">
+        <div class="card form-card">
+          <div class="panel-title">บันทึกค่าใช้จ่าย</div>
+          <div class="form-grid" style="grid-template-columns:1fr 1.4fr 1.2fr 1fr 2fr auto">
+            <div class="field"><label>วันที่</label><input id="expenseDate" type="text" inputmode="numeric" placeholder="dd/mm/yyyy"></div>
+            <div class="field"><label>รายการ</label><input id="expenseTxnName" placeholder="เช่น ค่าเดินทาง"></div>
+            <div class="field"><label>หักจากหมวด</label><select id="expenseTxnCategory"></select></div>
+            <div class="field"><label>จำนวนเงิน</label><input id="expenseTxnAmount" type="number" min="0"></div>
+            <div class="field"><label>หมายเหตุ</label><input id="expenseTxnNote" placeholder="ถ้ามี"></div>
+            <div class="field"><button id="expenseTxnSaveBtn" class="btn btn-primary" style="width:100%" onclick="saveExpenseTxn()">บันทึก</button></div>
+          </div>
+          <div class="actions">
+            <button id="cancelExpenseTxnEdit" class="btn btn-light" style="display:none" onclick="cancelExpenseTxnEditFn()">ยกเลิกการแก้ไข</button>
+          </div>
+        </div>
+
+        <div class="card panel">
+          <div class="panel-title">รายการค่าใช้จ่าย</div>
+          <table>
+            <thead>
+              <tr>
+                <th>วันที่</th>
+                <th>รายการ</th>
+                <th>หักจากหมวด</th>
+                <th class="num">จำนวนเงิน</th>
+                <th>หมายเหตุ</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="expenseTxnRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="creditImportTab" style="display:none">
+        <div class="card form-card">
+          <div class="panel-title">เติมเครดิตเข้าระบบเพื่อรอขาย</div>
+          <div class="form-grid" style="grid-template-columns:1fr 1.1fr 1fr 1fr 1.4fr 1.7fr auto">
+            <div class="field"><label>วันที่</label><input id="importDate" type="text" inputmode="numeric" placeholder="dd/mm/yyyy"></div>
+            <div class="field"><label>ประเภท</label>
+              <select id="importType">
+                <option value="normal">เติมเครดิต</option>
+                <option value="odm">เติมเครดิต ODM</option>
+                <option value="opening">เครดิตยกมา</option>
+                <option value="carry_longterm">Long-term ยกมา</option>
+              </select>
+            </div>
+            <div class="field"><label>จำนวนเครดิต</label><input id="importUnits" type="number" min="0"></div>
+            <div class="field"><label>ต้นทุน / เครดิต</label><input id="importCpu" type="number" min="0" placeholder="ถ้ามี"></div>
+            <div class="field"><label>เติมให้ ODM ไหน</label><input id="importOdmTarget" placeholder="เช่น Space One"></div>
+            <div class="field"><label>หมายเหตุ</label><input id="importNote" placeholder="เลขออเดอร์ / หมายเหตุ"></div>
+            <div class="field"><button id="importSaveBtn" class="btn btn-primary" style="width:100%" onclick="saveCreditImport()">บันทึก</button></div>
+          </div>
+          <div class="actions"><button id="cancelImportEdit" class="btn btn-light" style="display:none" onclick="cancelImportEditFn()">ยกเลิกการแก้ไข</button></div>
+        </div>
+
+        <div class="card panel">
+          <div class="panel-title">ประวัติการเติมเครดิต</div>
+          <table>
+            <thead><tr><th>วันที่</th><th>ประเภท</th><th>เติมให้ ODM</th><th class="num">เครดิต</th><th class="num">ต้นทุน/เครดิต</th><th class="num">มูลค่าทุน</th><th>หมายเหตุ</th><th></th></tr></thead>
+            <tbody id="creditImportRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary" class="section">
+      <div class="top">
+        <div><h1 id="summaryTitle">สรุปสิ้นเดือน Easy Smart</h1><div class="sub" id="summarySub">สรุปยอดขายและปันผลของ Easy Smart</div></div>
+        <select id="summaryMonth" class="select"></select>
+      </div>
+
+      <div class="summaryline" style="grid-template-columns:repeat(6,1fr)">
+        <div class="sumitem"><small>ยอดขายรวม</small><strong id="sSales">฿0</strong></div>
+        <div class="sumitem"><small>ทุนรวม</small><strong id="sCost">฿0</strong></div>
+        <div class="sumitem"><small>กำไรรวม</small><strong id="sProfit">฿0</strong></div>
+        <div class="sumitem"><small>ปันผลของพี่</small><strong class="red" id="sOwnerDividend">฿0</strong></div>
+        <div class="sumitem"><small>ปันผลอีก 3 คน</small><strong class="red" id="sOthersDividend">฿0</strong><div class="hint" id="sEachOtherDividend">คนละ ฿0</div></div>
+        <div class="sumitem"><small>ยอดจ่ายนายทุน</small><strong class="green" id="sInvestorPayout">฿0</strong></div>
+      </div>
+
+      <div class="grid2">
+        <div class="card panel">
+          <div class="panel-title">รายละเอียดเงินปันผล</div>
+          <table>
+            <thead><tr><th>ผู้รับ</th><th>ฐานคำนวณ</th><th class="num">อัตรา</th><th class="num">เงินปันผล</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="badge b-red" id="ownerDividendLabel">พี่ · Easy Smart</span></td>
+                <td id="easyBase">0 เครดิต</td>
+                <td class="num">10 บาท / เครดิต</td>
+                <td class="num money red" id="easyDividendRow">฿0</td>
+              </tr>
+              <tr>
+                <td><span class="badge b-blue" id="ownerSecondDividendLabel">พี่ · ODM</span></td>
+                <td id="odmBase">กำไร ฿0</td>
+                <td class="num">5% ของกำไร ODM</td>
+                <td class="num money red" id="odmDividendRow">฿0</td>
+              </tr>
+              <tr>
+                <td><span class="badge b-green">คนที่ 1</span></td>
+                <td id="allProfitBase1">กำไรรวม ฿0</td>
+                <td class="num">5% ของกำไรรวม</td>
+                <td class="num money red" id="other1DividendRow">฿0</td>
+              </tr>
+              <tr>
+                <td><span class="badge b-green">คนที่ 2</span></td>
+                <td id="allProfitBase2">กำไรรวม ฿0</td>
+                <td class="num">5% ของกำไรรวม</td>
+                <td class="num money red" id="other2DividendRow">฿0</td>
+              </tr>
+              <tr>
+                <td><span class="badge b-green">คนที่ 3</span></td>
+                <td id="allProfitBase3">กำไรรวม ฿0</td>
+                <td class="num">5% ของกำไรรวม</td>
+                <td class="num money red" id="other3DividendRow">฿0</td>
+              </tr>
+              <tr>
+                <td colspan="3"><strong>เงินปันผลรวมทั้งหมด</strong></td>
+                <td class="num money red" id="totalDividendRow">฿0</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="note" style="margin-top:12px">
+            ของพี่คิดแบบเฉพาะ: Easy Smart = 10 บาทต่อเครดิต และ ODM = 5% ของกำไร ODM ส่วนอีก 3 คน แต่ละคนได้ 5% ของกำไรรวมจากทุกหมวด
+          </div>
+        </div>
+
+        <div class="card panel">
+          <div class="panel-title">สรุปยอดจ่ายนายทุน</div>
+          <table>
+            <tbody>
+              <tr><td>ทุนรวม</td><td class="num money" id="investCost">฿0</td></tr>
+              <tr><td>บวก กำไรรวม</td><td class="num money green" id="investProfit">฿0</td></tr>
+              <tr><td>หัก ปันผลของพี่</td><td class="num money red" id="investOwner">-฿0</td></tr>
+              <tr><td>หัก ปันผลอีก 3 คน <small id="investEachOther" style="color:var(--muted)">(คนละ ฿0)</small></td><td class="num money red" id="investOthers">-฿0</td></tr>
+              <tr style="font-size:16px"><td><strong>ยอดจ่ายนายทุน</strong></td><td class="num money green" id="investTotal">฿0</td></tr>
+            </tbody>
+          </table>
+          <div class="totalbar"><span>สูตร</span><span>ทุนรวม + กำไรรวม − ปันผลทั้งหมด</span></div>
+        </div>
+      </div>
+
+      <div class="actions"><button id="closeMonthBtn" class="btn btn-primary" onclick="closeMonth()">ยืนยันสรุปสิ้นเดือน</button></div>
+    </section>
+
+    <section id="settings" class="section">
+      <div class="settings-head">
+        <div>
+          <h1 id="settingsTitle">ตั้งค่า Easy Smart</h1>
+          <div class="sub">ตั้งค่าครั้งเดียว แล้วให้ระบบเลือกใช้ค่าเริ่มต้นให้อัตโนมัติ</div>
+        </div>
+        <div class="settings-module-switch">
+          <button id="settingsEasyBtn" class="active" onclick="switchSettingsModule('easy')">Easy Smart</button>
+          <button id="settingsEnrollBtn" onclick="switchSettingsModule('enroll')">EnrollOne</button>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <div class="card settings-card">
+          <div class="panel-title">หมวดการขาย</div>
+          <div class="desc">กำหนดหมวดที่ใช้ในโมดูลนี้ เช่น Easy Smart Lock / ODM หรือหมวดของ EnrollOne</div>
+          <div class="inline-form">
+            <div class="field"><label>ชื่อหมวดใหม่</label><input id="newCategoryName" placeholder="ชื่อหมวด"></div>
+            <div class="field"><label>รหัสภายใน</label><input id="newCategoryCode" placeholder="เช่น premium"></div>
+            <button class="btn btn-primary" onclick="addCategoryMaster()">+ เพิ่ม</button>
+          </div>
+          <table style="margin-top:14px">
+            <thead><tr><th>หมวด</th><th>รหัส</th><th>สถานะ</th><th class="num">จัดการ</th></tr></thead>
+            <tbody id="categoryMasterRows"></tbody>
+          </table>
+        </div>
+
+        <div class="card settings-card">
+          <div class="panel-title">ลูกค้า / ร้านค้า</div>
+          <div class="desc">แยกรายชื่อตามโมดูล ป้องกันข้อมูล Easy Smart และ EnrollOne ปนกัน</div>
+          <div class="inline-form" style="grid-template-columns:2fr auto">
+            <div class="field"><label>ชื่อใหม่</label><input id="newCustomerName" placeholder="เช่น Space One"></div>
+            <button class="btn btn-primary" onclick="addCustomerMaster()">+ เพิ่มลูกค้า</button>
+          </div>
+          <table style="margin-top:14px">
+            <thead><tr><th>ชื่อ</th><th class="num">จัดการ</th></tr></thead>
+            <tbody id="customerMasterRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <div class="card settings-card">
+          <div class="panel-title">ชุดต้นทุน</div>
+          <div class="desc">ตั้งชุดต้นทุนหลายชุดได้ และกำหนด 1 ชุดเป็นค่าเริ่มต้นของแต่ละโมดูล</div>
+          <div class="inline-form">
+            <div class="field"><label>ชื่อชุดต้นทุน</label><input id="newCostName" placeholder="เช่น ทุน 60"></div>
+            <div class="field"><label>ต้นทุน / เครดิต</label><input id="newCostValue" type="number" min="0"></div>
+            <button class="btn btn-primary" onclick="addCostProfileMaster()">+ เพิ่ม</button>
+          </div>
+          <table style="margin-top:14px">
+            <thead><tr><th>ชุดต้นทุน</th><th class="num">ต้นทุน/เครดิต</th><th>ค่าเริ่มต้น</th><th class="num">จัดการ</th></tr></thead>
+            <tbody id="costMasterRows"></tbody>
+          </table>
+        </div>
+
+        <div class="card settings-card">
+          <div class="panel-title">สูตรปันผล</div>
+          <div class="desc" id="dividendSettingDesc">สูตรของ Easy Smart แยกจาก EnrollOne โดยสิ้นเชิง</div>
+
+          <div id="easyDividendSettings">
+            <div class="rule-row">
+              <div class="field"><label>พี่ · Easy Smart Lock</label><input value="บาทต่อเครดิต" disabled></div>
+              <div class="field"><label>อัตรา</label><input id="setEasyPerCredit" type="number" min="0"></div>
+              <div class="field"><label>หน่วย</label><input value="บาท/เครดิต" disabled></div>
+            </div>
+            <div class="rule-row">
+              <div class="field"><label>พี่ · ODM</label><input value="% จากกำไร ODM" disabled></div>
+              <div class="field"><label>อัตรา</label><input id="setEasyOdmPct" type="number" min="0"></div>
+              <div class="field"><label>หน่วย</label><input value="%" disabled></div>
+            </div>
+            <div class="rule-row">
+              <div class="field"><label>ผู้รับปันผลอื่น</label><input value="% จากกำไรรวม" disabled></div>
+              <div class="field"><label>จำนวนคน</label><input id="setEasyPartnerCount" type="number" min="0"></div>
+              <div class="field"><label>% ต่อคน</label><input id="setEasyOtherPct" type="number" min="0"></div>
+            </div>
+          </div>
+
+          <div id="enrollDividendSettings" style="display:none">
+            <div class="rule-row">
+              <div class="field"><label>ของพี่ · วิธีคำนวณ</label>
+                <select id="setEnrollOwnerMethod">
+                  <option value="none">ไม่คิดปันผล</option>
+                  <option value="profit_percent">% จากกำไร</option>
+                  <option value="per_credit">บาทต่อเครดิต</option>
+                </select>
+              </div>
+              <div class="field"><label>อัตรา</label><input id="setEnrollOwnerRate" type="number" min="0"></div>
+              <div class="field"><label>ฐาน</label><input value="EnrollOne ทั้งโมดูล" disabled></div>
+            </div>
+            <div class="rule-row">
+              <div class="field"><label>ผู้รับปันผลอื่น · วิธีคำนวณ</label>
+                <select id="setEnrollOtherMethod">
+                  <option value="none">ไม่คิดปันผล</option>
+                  <option value="profit_percent">% จากกำไร</option>
+                  <option value="per_credit">บาทต่อเครดิต</option>
+                </select>
+              </div>
+              <div class="field"><label>จำนวนคน</label><input id="setEnrollPartnerCount" type="number" min="0"></div>
+              <div class="field"><label>อัตราต่อคน</label><input id="setEnrollOtherRate" type="number" min="0"></div>
+            </div>
+          </div>
+          <div class="actions"><button class="btn btn-primary" onclick="saveDividendMaster()">บันทึกสูตรปันผล</button></div>
+        </div>
+      </div>
+
+
+      <div id="easyCreditSettingCard" class="card settings-card" style="margin-bottom:16px">
+        <div class="panel-title">ระบบเครดิต Easy Smart</div>
+        <div class="desc">ส่วนนี้ใช้กำหนดพฤติกรรมระบบ ไม่ใช่กรอกยอดประจำเดือน ยอดจริงจะไหลจากรายการและการปิดรอบ</div>
+        <div class="status-box">
+          <div class="status-item"><small>เครดิตตั้งต้นปัจจุบัน</small><strong id="settingCurrentCredit">459</strong></div>
+          <div class="status-item"><small>ยอดค้างล่าสุด</small><strong id="settingCurrentOutstanding">5,070</strong></div>
+          <div class="status-item"><small>การยกยอด</small><strong>อัตโนมัติเมื่อปิดเดือน</strong></div>
+        </div>
+        <div class="note" style="margin-top:12px">Easy Smart จะยกทั้ง “เครดิตคงเหลือ” และ “เครดิตคงค้างรายร้าน/ชุดต้นทุน” ไปเดือนถัดไป ส่วนยอดเติมเครดิตจะนับเฉพาะรายการที่เติมในเดือนนั้น</div>
+      </div>
+
+      <div class="card settings-card">
+        <div class="panel-title">ข้อมูลและสำรองระบบ</div>
+        <div class="desc">ข้อมูล Easy Smart และ EnrollOne แยกโมดูล แต่เก็บอยู่ในไฟล์เดียวกัน</div>
+        <div class="actions" style="justify-content:flex-start">
+          <button class="btn btn-dark" onclick="exportSystemBackup()">Export Backup</button>
+          <label class="btn btn-light">Import Backup<input id="settingsImportFile" type="file" accept=".json" hidden onchange="importSystemBackup(event)"></label>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+
+<script>
+const key='easy-enroll-business-manager-online-cache-v1';
+const defaultData={
+  balance:459,
+  sales:[
+    {module:'easy',date:'2026-07-17',channel:'Easy Smart Lock',customer:'Flukbike',units:20,price:7400,cpu:60},
+    {module:'easy',date:'2026-07-18',channel:'Easy Smart Lock',customer:'IOS Store',units:20,price:7400,cpu:60},
+    {module:'easy',date:'2026-07-18',channel:'Easy Smart Lock',customer:'PP Plus',units:20,price:4000,cpu:60},
+    {module:'easy',date:'2026-07-31',channel:'Easy Smart Lock',customer:'KEE',units:50,price:15000,cpu:60},
+    {module:'easy',date:'2026-07-04',channel:'ODM',customer:'Space One ODM',units:5000,price:450000,cpu:60},
+    {module:'easy',date:'2026-07-02',channel:'ODM',customer:'Space One',units:400,price:36000,cpu:60},
+    {module:'easy',date:'2026-07-03',channel:'ODM',customer:'Space One',units:400,price:36000,cpu:60},
+    {module:'easy',date:'2026-07-08',channel:'ODM',customer:'Space One',units:400,price:36000,cpu:60},
+    {module:'easy',date:'2026-07-19',channel:'ODM',customer:'Space One',units:400,price:36000,cpu:60},
+    {module:'easy',date:'2026-07-30',channel:'ODM',customer:'Space One',units:400,price:36000,cpu:60},
+    {module:'easy',date:'2026-07-23',channel:'Easy Smart Lock',customer:'OTP',units:0,price:-5300,cpu:0},  ],
+  outstanding:[],
+  deductions:[{name:'ค่าใช้จ่าย/หักออก',amount:0}],
+  shares:[{name:'หุ้นส่วน A',pct:50},{name:'หุ้นส่วน B',pct:50}],
+  locked:['easy|2026-07'],
+  creditAdjustments:[],
+  creditImports:[
+    {_id:'imp_opening_current',module:'easy',date:'2026-07-01',type:'opening',units:2769,cpu:'',note:'เครดิตยกมา'},
+    {_id:'imp_receivable_current',module:'easy',date:'2026-07-01',type:'carry_longterm',units:4870,cpu:'',note:'ยอดค้างชำระ'},
+    {_id:'imp_odm_current',module:'easy',date:'2026-07-04',type:'odm',units:5000,cpu:60,odmTarget:'Space One',note:'ยอดเติม ODM'}
+  ],
+  easyCreditSnapshot:{
+    asOf:'2026-07-31',
+    opening:2769,
+    receivableOpening:4870,
+    odmAdded:5000,
+    total:12639,
+    receivableLatest:5070,
+    saleLatest1:110,
+    saleLatest2:7000,
+    saleLatest3:0,
+    balance:459
+  },
+  monthlyCreditCarry:{
+    '2026-08':459
+  },
+  monthlyOutstandingCarry:{
+    '2026-08':{
+      total:5070,
+      rows:[
+        {name:'Fast Choice',old:0,newv:200},
+        {name:'Nano Friend',old:1250,newv:720},
+        {name:'Smile Plus',old:200,newv:2700}
+      ]
+    }
+  },
+  monthSnapshots:{
+    'easy|2026-07':{
+      module:'easy',
+      month:'2026-07',
+      closedAt:'2026-08-07T00:00:00.000Z',
+      totals:{sales:658500,cost:426600,profit:231900,units:7110},
+      dividend:{owner:11600,others:34785,total:46385},
+      creditClosing:459,
+      outstanding:{
+        total:5070,
+        rows:[
+          {name:'Fast Choice',old:0,newv:200},
+          {name:'Nano Friend',old:1250,newv:720},
+          {name:'Smile Plus',old:200,newv:2700}
+        ]
+      }
+    }
+  }
+};
+let db=JSON.parse(localStorage.getItem(key)||'null')||defaultData;
+let cloudReady=false;
+let cloudUnsubscribe=null;
+let cloudWriteTimer=null;
+const CLOUD_COLLECTION='businessManager';
+const CLOUD_DOCUMENT='main';
+
+function cacheLocal(){ localStorage.setItem(key,JSON.stringify(db)); }
+
+function showCloudStatus(text,state='ok'){
+  const el=document.getElementById('cloudStatus');
+  if(!el)return;
+  el.textContent=text;
+  el.dataset.state=state;
+}
+
+async function cloudSaveNow(){
+  if(!cloudReady || !window.__cloud)return;
+  const {db:firestore,doc,setDoc}=window.__cloud;
+  const ref=doc(firestore,CLOUD_COLLECTION,CLOUD_DOCUMENT);
+  await setDoc(ref,JSON.parse(JSON.stringify(db)),{merge:false});
+}
+
+function scheduleCloudSave(){
+  cacheLocal();
+  clearTimeout(cloudWriteTimer);
+  cloudWriteTimer=setTimeout(()=>{
+    cloudSaveNow().catch(err=>{
+      console.error(err);
+      showCloudStatus('บันทึก Cloud ไม่สำเร็จ','error');
+    });
+  },250);
+}
+
+async function initCloud(){
+  if(!window.__cloud)return;
+  const {db:firestore,doc,getDoc,setDoc,onSnapshot}=window.__cloud;
+  const ref=doc(firestore,CLOUD_COLLECTION,CLOUD_DOCUMENT);
+  try{
+    const snap=await getDoc(ref);
+    if(snap.exists()){
+      db=snap.data();
+      cacheLocal();
+    }else{
+      await setDoc(ref,JSON.parse(JSON.stringify(db)));
+    }
+    cloudReady=true;
+    showCloudStatus('Cloud พร้อมใช้งาน','ok');
+    renderAll();
+
+    if(cloudUnsubscribe)cloudUnsubscribe();
+    cloudUnsubscribe=onSnapshot(ref,(snap)=>{
+      if(!snap.exists())return;
+      db=snap.data();
+      cacheLocal();
+      renderAll();
+      showCloudStatus('ข้อมูลซิงก์แล้ว','ok');
+    },()=>{
+      showCloudStatus('Cloud หลุดการเชื่อมต่อ','error');
+    });
+  }catch(err){
+    console.error(err);
+    showCloudStatus('ใช้ข้อมูลในเครื่องชั่วคราว','warn');
+  }
+}
+
+window.addEventListener('firebase-ready',initCloud);
+if(window.__cloud)initCloud();
+let editSaleId=null;
+let editOutId=null;
+if(!db.creditAdjustments) db.creditAdjustments=[];
+if(!db.creditImports) db.creditImports=[];
+if(!db.customers) db.customers=[
+  'Space One','Nano Friend','Smile Plus','Fast Choice','Flukbike','IOS Store','PP Plus','KEE','OTP'
+];
+if(!db.customersByModule){
+  db.customersByModule={
+    easy:['Space One','Space One ODM','Fast Choice','Nano Friend','Smile Plus','Flukbike','IOS Store','PP Plus','KEE','OTP'],
+    enroll:[]
+  };
+}
+
+if(!db.categoriesByModule) db.categoriesByModule={
+  easy:[
+    {_id:'cat_easy_lock',code:'Easy Smart Lock',name:'Easy Smart Lock',enabled:true},
+    {_id:'cat_easy_odm',code:'ODM',name:'ODM',enabled:true},
+    {_id:'cat_easy_claim',code:'เคลม',name:'เคลม',enabled:true}
+  ],
+  enroll:[
+    {_id:'cat_enroll_main',code:'EnrollOne',name:'EnrollOne',enabled:true}
+  ]
+};
+// Built-in category system codes are immutable.
+// The user may rename the display label without breaking historical sales.
+(function repairBuiltInCategoryCodes(){
+  const easy=db.categoriesByModule?.easy||[];
+  const fixed=[
+    ['cat_easy_lock','Easy Smart Lock'],
+    ['cat_easy_odm','ODM'],
+    ['cat_easy_claim','เคลม']
+  ];
+  fixed.forEach(([id,systemCode])=>{
+    const c=easy.find(x=>x._id===id);
+    if(!c)return;
+    const oldCode=c.code;
+    if(oldCode!==systemCode){
+      // If the user changed the code before this fix, move related records back
+      // to the immutable system code but keep c.name exactly as edited.
+      (db.sales||[]).forEach(x=>{
+        if((x.module||'easy')==='easy' && x.channel===oldCode) x.channel=systemCode;
+      });
+      (db.expenseMasters||[]).forEach(x=>{
+        if(x.module==='easy' && x.categoryCode===oldCode) x.categoryCode=systemCode;
+      });
+      (db.monthlyExpenses||[]).forEach(x=>{
+        if(x.module==='easy' && x.categoryCode===oldCode) x.categoryCode=systemCode;
+      });
+      c.code=systemCode;
+    }
+    c.system=true;
+  });
+  const enroll=db.categoriesByModule?.enroll||[];
+  const ec=enroll.find(x=>x._id==='cat_enroll_main');
+  if(ec){
+    const oldCode=ec.code;
+    if(oldCode!=='EnrollOne'){
+      (db.sales||[]).forEach(x=>{
+        if(x.module==='enroll' && x.channel===oldCode) x.channel='EnrollOne';
+      });
+      (db.expenseMasters||[]).forEach(x=>{
+        if(x.module==='enroll' && x.categoryCode===oldCode) x.categoryCode='EnrollOne';
+      });
+      (db.monthlyExpenses||[]).forEach(x=>{
+        if(x.module==='enroll' && x.categoryCode===oldCode) x.categoryCode='EnrollOne';
+      });
+      ec.code='EnrollOne';
+    }
+    ec.system=true;
+  }
+})();
+
+if(!db.expenseMasters) db.expenseMasters=[
+  {_id:'exp_travel',module:'easy',name:'ค่าเดินทาง',categoryCode:'all',defaultAmount:0,enabled:true}
+];
+if(!db.monthlyExpenses) db.monthlyExpenses=[];
+
+
+if(!db.costProfiles) db.costProfiles=[
+  {_id:'cost_easy_60',module:'easy',name:'ทุน 60',value:60,isDefault:true},
+  {_id:'cost_easy_100',module:'easy',name:'ทุน 100',value:100,isDefault:false},
+  {_id:'cost_easy_120',module:'easy',name:'ทุน 120',value:120,isDefault:false},
+  {_id:'cost_easy_150',module:'easy',name:'ทุน 150',value:150,isDefault:false},
+  {_id:'cost_enroll_default',module:'enroll',name:'ต้นทุนเริ่มต้น EnrollOne',value:0,isDefault:true}
+];
+if(!db.dividendSettings) db.dividendSettings={
+  easyPerCredit:10,
+  easyOdmPct:5,
+  easyOtherPct:5,
+  easyPartnerCount:3,
+  enrollOwnerMethod:'profit_percent',
+  enrollOwnerRate:5,
+  enrollOtherMethod:'profit_percent',
+  enrollOtherRate:5,
+  enrollPartnerCount:3
+};
+if(db.dividendSettings.enrollOwnerPct!=null && db.dividendSettings.enrollOwnerRate==null){
+  db.dividendSettings.enrollOwnerMethod='profit_percent';
+  db.dividendSettings.enrollOwnerRate=+db.dividendSettings.enrollOwnerPct||0;
+}
+if(db.dividendSettings.enrollOtherPct!=null && db.dividendSettings.enrollOtherRate==null){
+  db.dividendSettings.enrollOtherMethod='profit_percent';
+  db.dividendSettings.enrollOtherRate=+db.dividendSettings.enrollOtherPct||0;
+}
+if(db.dividendSettings.easyPartnerCount==null)db.dividendSettings.easyPartnerCount=3;
+if(db.dividendSettings.enrollPartnerCount==null)db.dividendSettings.enrollPartnerCount=3;
+
+
+if(!db.easyCreditSnapshot) db.easyCreditSnapshot={
+  asOf:'2026-07-31',opening:2769,receivableOpening:4870,odmAdded:5000,total:12639,
+  receivableLatest:5070,saleLatest1:110,saleLatest2:7000,saleLatest3:0,balance:459
+};
+if(!db.monthlyCreditCarry) db.monthlyCreditCarry={'2026-08':db.easyCreditSnapshot.balance||459};
+if(!db.monthlyOutstandingCarry) db.monthlyOutstandingCarry={
+  '2026-08':{
+    total:db.easyCreditSnapshot.receivableLatest||5070,
+    rows:[
+      {name:'Fast Choice',old:0,newv:200},
+      {name:'Nano Friend',old:1250,newv:720},
+      {name:'Smile Plus',old:200,newv:2700}
+    ]
+  }
+};
+if(!db.monthSnapshots) db.monthSnapshots={};
+if(!db.locked) db.locked=[];
+let adjustOutId=null;
+let editImportId=null;
+let activeModule='easy';
+
+function moduleName(m){return m==='easy'?'Easy Smart':'EnrollOne'}
+function filteredSales(){return db.sales.filter(x=>x.module===activeModule)}
+function filteredOutstanding(){return db.outstanding.filter(x=>x.module===activeModule)}
+function filteredImports(){return (db.creditImports||[]).filter(x=>x.module===activeModule)}
+
+
+function cloneRows(rows){
+  return (rows||[]).map(r=>({name:r.name,old:+r.old||0,newv:+r.newv||0}));
+}
+function mergeOutstandingRows(baseRows, monthEntries){
+  const map={};
+  cloneRows(baseRows).forEach(r=>{
+    map[r.name]={name:r.name,old:r.old,newv:r.newv};
+  });
+  (monthEntries||[]).forEach(x=>{
+    if(!map[x.name])map[x.name]={name:x.name,old:0,newv:0};
+    if(x.lot==='old') map[x.name].old+=(+x.units||0);
+    else map[x.name].newv+=(+x.units||0);
+  });
+  return Object.values(map).filter(r=>(r.old+r.newv)!==0);
+}
+function getOutstandingStateForMonth(m){
+  if(m==='2026-07'){
+    return {
+      total:5070,
+      rows:[
+        {name:'Fast Choice',old:0,newv:200},
+        {name:'Nano Friend',old:1250,newv:720},
+        {name:'Smile Plus',old:200,newv:2700}
+      ]
+    };
+  }
+  const carry=db.monthlyOutstandingCarry[m]||{total:0,rows:[]};
+  const monthEntries=db.outstanding.filter(x=>x.module==='easy'&&monthKey(x.date)===m);
+  const rows=mergeOutstandingRows(carry.rows,monthEntries);
+  return {total:rows.reduce((a,r)=>a+r.old+r.newv,0),rows};
+}
+function rollOutstandingForward(m){
+  if(!m||m==='2026-07')return;
+  const state=getOutstandingStateForMonth(m);
+  db.monthlyOutstandingCarry[nextMonthKey(m)]={total:state.total,rows:cloneRows(state.rows)};
+}
+function nextMonthKey(m){
+  const [y,mo]=m.split('-').map(Number);
+  const d=new Date(y,mo,1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function computeEasyCreditBalanceForMonth(m){
+  const snap=db.easyCreditSnapshot;
+  const opening=+(db.monthlyCreditCarry[m] ?? snap.balance);
+  const carriedOutstanding=+(db.monthlyOutstandingCarry[m]?.total||0);
+  const imports=(db.creditImports||[]).filter(x=>x.module==='easy'&&monthKey(x.date)===m&&['normal','odm'].includes(x.type))
+    .reduce((a,x)=>a+(+x.units||0),0);
+  const easySales=db.sales.filter(x=>x.module==='easy'&&monthKey(x.date)===m&&x.channel==='Easy Smart Lock')
+    .reduce((a,x)=>a+(+x.units||0),0);
+  const odmSales=db.sales.filter(x=>x.module==='easy'&&monthKey(x.date)===m&&x.channel==='ODM')
+    .reduce((a,x)=>a+(+x.units||0),0);
+  const latestOutstanding=getOutstandingStateForMonth(m).total;
+  return opening+carriedOutstanding+imports-latestOutstanding-easySales-odmSales;
+}
+function rollEasyCreditForward(m){
+  if(!m||m==='2026-07')return;
+  const closing=computeEasyCreditBalanceForMonth(m);
+  db.monthlyCreditCarry[nextMonthKey(m)]=closing;
+  rollOutstandingForward(m);
+}
+function importTypeName(t){
+  return t==='opening'?'เครดิตยกมา':
+         t==='carry_longterm'?'Long-term ยกมา':
+         t==='odm'?'เติมเครดิต ODM':'เติมเครดิต';
+}
+
+
+function makeId(prefix){
+  return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
+}
+// migrate old saved data so every row has a stable id
+db.sales=(db.sales||[]).map(x=>({...x,module:x.module||'easy',_id:x._id||makeId('sale')}));
+db.outstanding=(db.outstanding||[]).map(x=>({...x,module:x.module||'easy',_id:x._id||makeId('credit')}));
+localStorage.setItem(key,JSON.stringify(db));
+function save(){scheduleCloudSave();renderAll()}
+function fmt(n){return new Intl.NumberFormat('th-TH',{maximumFractionDigits:0}).format(Number(n||0))}
+function money(n){return '฿'+fmt(n)}
+function displayDate(v){
+  if(!v) return '-';
+  if(/^\d{4}-\d{2}-\d{2}$/.test(v)){
+    const [y,m,d]=v.split('-'); return `${d}/${m}/${y}`;
+  }
+  if(/^\d{2}\/\d{2}\/\d{4}$/.test(v)) return v;
+  return v;
+}
+function toISODate(v){
+  if(!v) return '';
+  if(/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  const m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(!m) return '';
+  const d=String(m[1]).padStart(2,'0'), mo=String(m[2]).padStart(2,'0'), y=m[3];
+  return `${y}-${mo}-${d}`;
+}
+
+function monthKey(d){return d?d.slice(0,7):''}
+function selectedMonth(){return document.getElementById('monthSelect').value||'2026-07'}
+function monthSales(m){return filteredSales().filter(x=>monthKey(x.date)===m)}
+function calcSale(s){let cost=(+s.units||0)*(+s.cpu||0);return {...s,cost,profit:(+s.price||0)-cost}}
+function monthTotals(m){
+  const arr=monthSales(m).map(calcSale);
+  return arr.reduce((a,s)=>({sales:a.sales+s.price,cost:a.cost+s.cost,profit:a.profit+s.profit,units:a.units+s.units}),{sales:0,cost:0,profit:0,units:0});
+}
+function months(){
+  let ms=[...new Set([
+    ...filteredSales().map(x=>monthKey(x.date)).filter(Boolean),
+    ...(activeModule==='easy'?Object.keys(db.monthlyCreditCarry||{}):[]),
+    ...filteredImports().map(x=>monthKey(x.date)).filter(Boolean)
+  ])].sort().reverse();
+  if(!ms.length)ms=['2026-07']; return ms;
+}
+function monthLabel(m){let [y,mo]=m.split('-');const names=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];return `${names[+mo-1]} ${+y+543}`}
+function fillMonths(){
+  let opts=months().map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join('');
+  const a=document.getElementById('monthSelect'),b=document.getElementById('summaryMonth');
+  let va=a.dataset.initialized?a.value:months()[0], vb=b.dataset.initialized?b.value:months()[0];
+  a.innerHTML=opts;b.innerHTML=opts;a.dataset.initialized='1';b.dataset.initialized='1';
+  if(months().includes(va))a.value=va;if(months().includes(vb))b.value=vb;
+}
+
+function lockKey(module,m){return module+'|'+m}
+function isMonthLocked(module,m){return db.locked.includes(lockKey(module,m))}
+function monthOfDateValue(v){
+  const iso=toISODate(v);
+  return iso?iso.slice(0,7):'';
+}
+function ensureMonthEditable(module,m){
+  if(isMonthLocked(module,m)){
+    alert('เดือน '+monthLabel(m)+' ถูกสรุปและล็อกแล้ว หากต้องการแก้ไขต้องยกเลิกการสรุปสิ้นเดือนก่อน');
+    return false;
+  }
+  return true;
+}
+function snapshotCurrentMonth(module,m){
+  const t=monthTotals(m);
+  const div=module==='easy' ? (()=> {
+    const easy=monthSales(m).filter(x=>x.channel==='Easy Smart Lock').map(calcSale);
+    const odm=monthSales(m).filter(x=>x.channel==='ODM').map(calcSale);
+    const easyCredits=easy.reduce((a,s)=>a+(+s.units||0),0);
+    const odmGross=odm.reduce((a,s)=>a+(+s.profit||0),0);const odmProfit=odmGross-monthExpenseForCategory('easy',m,'ODM');
+    const ownerEasy=easyCredits*10;
+    const ownerOdm=odmProfit*0.05;
+    const eachOther=t.profit*0.05;
+    return {owner:ownerEasy+ownerOdm,others:eachOther*3,total:ownerEasy+ownerOdm+eachOther*3};
+  })() : (()=> {
+    const owner=t.profit*0.05, each=t.profit*0.05;
+    return {owner,others:each*3,total:owner+each*3};
+  })();
+
+  const snap={
+    module,month:m,closedAt:new Date().toISOString(),
+    totals:t,dividend:div
+  };
+
+  if(module==='easy'){
+    snap.creditClosing=computeEasyCreditBalanceForMonth(m);
+    snap.outstanding=getOutstandingStateForMonth(m);
+  }
+  db.monthSnapshots[lockKey(module,m)]=snap;
+  return snap;
+}
+
+
+let settingsModule='easy';
+let editCategoryId=null;
+let editCustomerName=null;
+let editCostId=null;
+let editExpenseId=null;
+let editExpenseTxnId=null;
+
+function getDefaultCostProfile(module){
+  return db.costProfiles.find(x=>x.module===module&&x.isDefault) || db.costProfiles.find(x=>x.module===module);
+}
+function getCostProfileById(id){return db.costProfiles.find(x=>x._id===id)}
+function moduleCustomers(module){return db.customersByModule[module]||[]}
+function moduleCategories(module){return (db.categoriesByModule[module]||[]).filter(x=>x.enabled!==false)}
+function categoryRecord(module,code){
+  return (db.categoriesByModule[module]||[]).find(x=>x.code===code);
+}
+function categoryDisplayName(module,code){
+  const c=categoryRecord(module,code);
+  return c?c.name:code;
+}
+function isSystemCategoryId(id){
+  return ['cat_easy_lock','cat_easy_odm','cat_easy_claim','cat_enroll_main'].includes(id);
+}
+
+
+function fillCustomerMasterList(){
+  const el=document.getElementById('customerMasterList');
+  if(el)el.innerHTML=moduleCustomers(activeModule).slice().sort().map(x=>`<option value="${x}"></option>`).join('');
+}
+function fillSaleCostProfiles(selectedId=null){
+  const el=document.getElementById('saleCostProfile'); if(!el)return;
+  const profiles=db.costProfiles.filter(x=>x.module===activeModule);
+  el.innerHTML=profiles.map(x=>`<option value="${x._id}">${x.name} · ${fmt(x.value)}</option>`).join('');
+  const def=getDefaultCostProfile(activeModule);
+  const target=selectedId&&profiles.some(x=>x._id===selectedId)?selectedId:(def?def._id:'');
+  if(target)el.value=target;
+  applySelectedCostProfile();
+}
+function applySelectedCostProfile(){
+  const el=document.getElementById('saleCostProfile');if(!el)return;
+  const p=getCostProfileById(el.value);
+  if(p){
+    saleCpu.value=p.value;
+    const h=document.getElementById('saleCostHint');
+    if(h)h.textContent=(p.isDefault?'ค่าเริ่มต้น · ':'')+p.name+' = '+fmt(p.value)+'/เครดิต';
+  }
+}
+function renderSaleCategoryOptions(selected=null){
+  if(!document.getElementById('saleChannel'))return;
+  const cats=moduleCategories(activeModule);
+  saleChannel.innerHTML=cats.map(c=>`<option value="${c.code}">${c.name}</option>`).join('');
+  if(selected&&cats.some(c=>c.code===selected))saleChannel.value=selected;
+}
+
+function switchSettingsModule(module){
+  settingsModule=module;
+  settingsEasyBtn.classList.toggle('active',module==='easy');
+  settingsEnrollBtn.classList.toggle('active',module==='enroll');
+  settingsModule=activeModule;renderSettings();
+}
+function renderSettings(){
+  const title=document.getElementById('settingsTitle');
+  if(!title)return;
+  title.textContent='ตั้งค่า '+moduleName(settingsModule);
+
+  const cats=db.categoriesByModule[settingsModule]||[];
+  categoryMasterRows.innerHTML=cats.map(c=>`<tr>
+    <td>${c.name}</td>
+    <td>${c.code}${isSystemCategoryId(c._id)?' <span class="badge b-blue">รหัสระบบ</span>':''}</td>
+    <td>${c.enabled!==false?'<span class="badge b-green">ใช้งาน</span>':'<span class="badge b-amber">ปิด</span>'}</td>
+    <td class="num" style="white-space:nowrap">
+      <button class="btn btn-light" onclick="editCategoryMaster('${c._id}')">แก้ไข</button>
+      <button class="btn btn-light" onclick="toggleCategoryMaster('${c._id}')">${c.enabled!==false?'ปิด':'เปิด'}</button>
+      ${isSystemCategoryId(c._id)?'':`<button class="btn btn-light" onclick="removeCategoryMaster('${c._id}')">ลบ</button>`}
+    </td></tr>`).join('')||'<tr><td colspan="4">ยังไม่มีหมวด</td></tr>';
+
+  const customers=moduleCustomers(settingsModule);
+  customerMasterRows.innerHTML=customers.slice().sort().map(n=>`<tr>
+    <td>${n}</td><td class="num" style="white-space:nowrap">
+      <button class="btn btn-light" onclick="editCustomerMaster('${encodeURIComponent(n)}')">แก้ไข</button>
+      <button class="btn btn-light" onclick="removeCustomerMaster('${encodeURIComponent(n)}')">ลบ</button>
+    </td>
+  </tr>`).join('')||'<tr><td colspan="2">ยังไม่มีรายชื่อ</td></tr>';
+
+  const costs=db.costProfiles.filter(x=>x.module===settingsModule);
+  costMasterRows.innerHTML=costs.map(x=>`<tr>
+    <td>${x.name}</td><td class="num">${money(x.value)}</td>
+    <td>${x.isDefault?'<span class="badge b-green">ค่าเริ่มต้น</span>':`<button class="btn btn-light" onclick="setDefaultCostMaster('${x._id}')">ตั้งเป็นค่าเริ่มต้น</button>`}</td>
+    <td class="num" style="white-space:nowrap">
+      <button class="btn btn-light" onclick="editCostMaster('${x._id}')">แก้ไข</button>
+      <button class="btn btn-light" onclick="removeCostMaster('${x._id}')">ลบ</button>
+    </td>
+  </tr>`).join('')||'<tr><td colspan="4">ยังไม่มีชุดต้นทุน</td></tr>';
+
+  
+
+  easyDividendSettings.style.display=settingsModule==='easy'?'block':'none';
+  enrollDividendSettings.style.display=settingsModule==='enroll'?'block':'none';
+  easyCreditSettingCard.style.display=settingsModule==='easy'?'block':'none';
+  dividendSettingDesc.textContent=settingsModule==='easy'
+    ?'Easy Smart: พี่ได้ 10 บาท/เครดิตฝั่ง '+categoryDisplayName('easy','Easy Smart Lock')+' + 5% กำไร '+categoryDisplayName('easy','ODM')+' และผู้รับอื่นคิดจากกำไรรวม'
+    :'EnrollOne: เลือกวิธีปันผลได้เอง เพื่อเปลี่ยนสูตรในอนาคตโดยไม่ต้องแก้โค้ด';
+
+  setEasyPerCredit.value=db.dividendSettings.easyPerCredit||0;
+  setEasyOdmPct.value=db.dividendSettings.easyOdmPct||0;
+  setEasyOtherPct.value=db.dividendSettings.easyOtherPct||0;
+  setEasyPartnerCount.value=db.dividendSettings.easyPartnerCount||0;
+  setEnrollOwnerMethod.value=db.dividendSettings.enrollOwnerMethod||'none';
+  setEnrollOwnerRate.value=db.dividendSettings.enrollOwnerRate||0;
+  setEnrollOtherMethod.value=db.dividendSettings.enrollOtherMethod||'none';
+  setEnrollOtherRate.value=db.dividendSettings.enrollOtherRate||0;
+  setEnrollPartnerCount.value=db.dividendSettings.enrollPartnerCount||0;
+
+  settingCurrentCredit.textContent=fmt(db.monthlyCreditCarry['2026-08']??db.easyCreditSnapshot.balance??0);
+  settingCurrentOutstanding.textContent=fmt(db.monthlyOutstandingCarry['2026-08']?.total??db.easyCreditSnapshot.receivableLatest??0);
+}function addCategoryMaster(){
+  const name=newCategoryName.value.trim();
+  if(!name)return;
+
+  const arr=db.categoriesByModule[settingsModule]||[];
+  let requestedCode=(newCategoryCode.value.trim()||name);
+
+  if(editCategoryId){
+    const c=arr.find(x=>x._id===editCategoryId);if(!c)return;
+    const oldCode=c.code;
+
+    if(isSystemCategoryId(c._id)){
+      // Display name may change, system code must never change.
+      c.name=name;
+    }else{
+      if(arr.some(x=>x._id!==editCategoryId&&x.code.toLowerCase()===requestedCode.toLowerCase()))
+        return alert('รหัสหมวดนี้มีแล้ว');
+
+      c.name=name;
+      c.code=requestedCode;
+
+      if(oldCode!==requestedCode){
+        (db.sales||[]).forEach(x=>{
+          if(x.module===settingsModule&&x.channel===oldCode)x.channel=requestedCode;
+        });
+        (db.expenseMasters||[]).forEach(x=>{
+          if(x.module===settingsModule&&x.categoryCode===oldCode)x.categoryCode=requestedCode;
+        });
+        (db.monthlyExpenses||[]).forEach(x=>{
+          if(x.module===settingsModule&&x.categoryCode===oldCode)x.categoryCode=requestedCode;
+        });
+      }
+    }
+    editCategoryId=null;
+  }else{
+    if(arr.some(x=>x.code.toLowerCase()===requestedCode.toLowerCase()))
+      return alert('รหัสหมวดนี้มีแล้ว');
+    arr.push({_id:makeId('cat'),name,code:requestedCode,enabled:true,system:false});
+  }
+
+  newCategoryName.value='';
+  newCategoryCode.value='';
+  newCategoryCode.disabled=false;
+  newCategoryCode.title='';
+  save();
+}
+function editCategoryMaster(id){
+  const c=(db.categoriesByModule[settingsModule]||[]).find(x=>x._id===id);if(!c)return;
+  editCategoryId=id;
+  newCategoryName.value=c.name;
+  newCategoryCode.value=c.code;
+  newCategoryCode.disabled=isSystemCategoryId(id);
+  newCategoryCode.title=isSystemCategoryId(id)?'รหัสระบบคงที่ เพื่อให้รายการขายย้อนหลังไม่เสีย':'';
+}
+function toggleCategoryMaster(id){
+  const c=(db.categoriesByModule[settingsModule]||[]).find(x=>x._id===id);if(!c)return;
+  c.enabled=c.enabled===false?true:false;save();
+}
+function removeCategoryMaster(id){
+  if(isSystemCategoryId(id))return alert('หมวดหลักของระบบลบไม่ได้ แต่เปลี่ยนชื่อแสดงผลหรือปิดการใช้งานได้');
+  const arr=db.categoriesByModule[settingsModule]||[];
+  const c=arr.find(x=>x._id===id);if(!c)return;
+  if(db.sales.some(s=>s.module===settingsModule&&s.channel===c.code))return alert('หมวดนี้มีรายการขายใช้งานอยู่แล้ว จึงลบไม่ได้ แต่สามารถปิดการใช้งานได้');
+  if(confirm('ลบหมวด '+c.name+' หรือไม่?')){db.categoriesByModule[settingsModule]=arr.filter(x=>x._id!==id);save()}
+}
+
+function addCustomerMaster(){
+  const n=newCustomerName.value.trim();if(!n)return;
+  const arr=db.customersByModule[settingsModule]||(db.customersByModule[settingsModule]=[]);
+  if(editCustomerName){
+    const old=decodeURIComponent(editCustomerName);
+    const idx=arr.indexOf(old);
+    if(idx>=0)arr[idx]=n;
+    // update existing records in the same module too
+    db.sales.forEach(x=>{if(x.module===settingsModule&&x.customer===old)x.customer=n});
+    db.outstanding.forEach(x=>{if(x.module===settingsModule&&x.name===old)x.name=n});
+    editCustomerName=null;
+  }else if(!arr.includes(n))arr.push(n);
+  newCustomerName.value='';save();
+}
+function editCustomerMaster(encoded){
+  const n=decodeURIComponent(encoded);
+  editCustomerName=encoded;newCustomerName.value=n;
+}
+function removeCustomerMaster(encoded){
+  const n=decodeURIComponent(encoded),arr=db.customersByModule[settingsModule]||[];
+  if(!confirm('ลบ '+n+' ออกจากรายการเลือกหรือไม่?'))return;
+  db.customersByModule[settingsModule]=arr.filter(x=>x!==n);save();
+}
+
+function addCostProfileMaster(){
+  const name=newCostName.value.trim(),value=+newCostValue.value||0;if(!name)return alert('ใส่ชื่อชุดต้นทุน');
+  if(editCostId){
+    const p=getCostProfileById(editCostId);if(!p)return;
+    p.name=name;p.value=value;editCostId=null;
+  }else{
+    const hasDefault=db.costProfiles.some(x=>x.module===settingsModule&&x.isDefault);
+    db.costProfiles.push({_id:makeId('cost'),module:settingsModule,name,value,isDefault:!hasDefault});
+  }
+  newCostName.value='';newCostValue.value='';save();
+}
+function editCostMaster(id){
+  const p=getCostProfileById(id);if(!p)return;
+  editCostId=id;newCostName.value=p.name;newCostValue.value=p.value;
+}
+function setDefaultCostMaster(id){
+  const p=getCostProfileById(id);if(!p)return;
+  db.costProfiles.forEach(x=>{if(x.module===p.module)x.isDefault=x._id===id});save();
+}
+function removeCostMaster(id){
+  const p=getCostProfileById(id);if(!p)return;
+  if(db.sales.some(x=>x.costProfileId===id)||db.outstanding.some(x=>x.costProfileId===id))return alert('ชุดต้นทุนนี้ถูกใช้งานแล้ว จึงลบไม่ได้');
+  if(!confirm('ลบชุดต้นทุน '+p.name+' หรือไม่?'))return;
+  db.costProfiles=db.costProfiles.filter(x=>x._id!==id);
+  if(p.isDefault){const f=db.costProfiles.find(x=>x.module===p.module);if(f)f.isDefault=true}
+  save();
+}
+
+
+
+
+
+function saveExpenseMaster(){
+  const name=expenseName.value.trim(),categoryCode=expenseCategory.value,defaultAmount=+expenseDefaultAmount.value||0;
+  if(!name)return alert('ใส่ชื่อรายการค่าใช้จ่าย');
+  if(editExpenseId){
+    const x=db.expenseMasters.find(v=>v._id===editExpenseId);if(!x)return;
+    x.name=name;x.categoryCode=categoryCode;x.defaultAmount=defaultAmount;
+    editExpenseId=null;
+  }else{
+    db.expenseMasters.push({_id:makeId('exp'),module:activeModule,name,categoryCode,defaultAmount,enabled:true});
+  }
+  expenseName.value='';expenseDefaultAmount.value='';expenseEditNote.textContent='';expenseSaveBtn.textContent='+ เพิ่มรายการ';
+  save();
+  
+}
+function editExpenseMaster(id){
+  const x=db.expenseMasters.find(v=>v._id===id);if(!x)return;
+  editExpenseId=id;expenseName.value=x.name;expenseCategory.value=x.categoryCode;expenseDefaultAmount.value=x.defaultAmount||0;
+  expenseSaveBtn.textContent='บันทึกการแก้ไข';
+  expenseEditNote.textContent='กำลังแก้ไข: '+x.name;
+}
+function toggleExpenseMaster(id){
+  const x=db.expenseMasters.find(v=>v._id===id);if(!x)return;
+  x.enabled=x.enabled===false?true:false;save();
+}
+function removeExpenseMaster(id){
+  const x=db.expenseMasters.find(v=>v._id===id);if(!x)return;
+  if(!confirm('ลบรายการค่าใช้จ่าย '+x.name+' หรือไม่?'))return;
+  db.expenseMasters=db.expenseMasters.filter(v=>v._id!==id);save();
+}
+function saveDividendMaster(){
+  db.dividendSettings.easyPerCredit=+setEasyPerCredit.value||0;
+  db.dividendSettings.easyOdmPct=+setEasyOdmPct.value||0;
+  db.dividendSettings.easyOtherPct=+setEasyOtherPct.value||0;
+  db.dividendSettings.easyPartnerCount=+setEasyPartnerCount.value||0;
+  db.dividendSettings.enrollOwnerMethod=setEnrollOwnerMethod.value;
+  db.dividendSettings.enrollOwnerRate=+setEnrollOwnerRate.value||0;
+  db.dividendSettings.enrollOtherMethod=setEnrollOtherMethod.value;
+  db.dividendSettings.enrollOtherRate=+setEnrollOtherRate.value||0;
+  db.dividendSettings.enrollPartnerCount=+setEnrollPartnerCount.value||0;
+  save();alert('บันทึกสูตรปันผลแล้ว');
+}
+function computeRule(method,rate,profit,units){
+  if(method==='profit_percent')return profit*(rate/100);
+  if(method==='per_credit')return units*rate;
+  return 0;
+}
+function exportSystemBackup(){
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='unit-manager-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);
+}
+function importSystemBackup(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>{try{db=JSON.parse(r.result);localStorage.setItem(key,JSON.stringify(db));location.reload()}catch(_){alert('ไฟล์ Backup ไม่ถูกต้อง')}};r.readAsText(f);
+}
+function renderDashboard(){
+  const m=selectedMonth(),t=monthTotals(m);
+
+  // ----- month-specific Easy credit state -----
+  let creditState={opening:0,carry:0,imported:0,total:0,longNow:0,sale1:0,sale2:0,sale3:0,balance:0};
+  if(activeModule==='easy'){
+    if(m==='2026-07'){
+      const s=db.easyCreditSnapshot;
+      creditState={
+        opening:+s.opening||0,
+        carry:+s.receivableOpening||0,
+        imported:+s.odmAdded||0,
+        total:+s.total||0,
+        longNow:+s.receivableLatest||0,
+        sale1:+s.saleLatest1||0,
+        sale2:+s.saleLatest2||0,
+        sale3:+s.saleLatest3||0,
+        balance:+s.balance||0
+      };
+    }else{
+      const opening=+(db.monthlyCreditCarry[m] ?? db.easyCreditSnapshot.balance ?? 0);
+      const carriedOutstanding=(db.monthlyOutstandingCarry[m]||{total:0,rows:[]});
+      const carry=+carriedOutstanding.total||0;
+
+      // Only credits actually topped up inside the selected month.
+      const monthImports=(db.creditImports||[])
+        .filter(x=>x.module==='easy'&&monthKey(x.date)===m&&['normal','odm'].includes(x.type))
+        .reduce((a,x)=>a+(+x.units||0),0);
+
+      // Outstanding latest = carried outstanding + movements created in this month.
+      const outState=getOutstandingStateForMonth(m);
+      const longNow=outState.total;
+
+      const monthEasy=db.sales
+        .filter(x=>x.module==='easy'&&monthKey(x.date)===m&&x.channel==='Easy Smart Lock')
+        .reduce((a,x)=>a+(+x.units||0),0);
+      const monthOdm=db.sales
+        .filter(x=>x.module==='easy'&&monthKey(x.date)===m&&x.channel==='ODM')
+        .reduce((a,x)=>a+(+x.units||0),0);
+
+      const total=opening+carry+monthImports;
+      const balance=total-longNow-monthEasy-monthOdm;
+      creditState={opening,carry,imported:monthImports,total,longNow,sale1:monthEasy,sale2:monthOdm,sale3:0,balance};
+    }
+  }
+
+  // KPI cards
+  const monthOutstanding = activeModule==='easy'
+    ? (m==='2026-07' ? creditState.longNow : db.outstanding.filter(x=>x.module==='easy'&&monthKey(x.date)===m).reduce((a,x)=>a+(+x.units||0),0))
+    : 0;
+  kSales.textContent=money(t.sales);
+  kCost.textContent=money(t.cost);
+  kProfit.textContent=money(t.profit);
+  kUnits.textContent=fmt(t.units);
+  kOutstanding.textContent=fmt(monthOutstanding);
+  kBalance.textContent=activeModule==='easy'?fmt(creditState.balance):'—';
+
+  // Sales summary by category
+  const channels=activeModule==='easy'?['Easy Smart Lock','ODM','เคลม']:['EnrollOne'];
+  channelSummary.innerHTML=channels.map(c=>{
+    let arr=monthSales(m).filter(x=>x.channel===c).map(calcSale);
+    let z=arr.reduce((a,s)=>({u:a.u+s.units,p:a.p+s.price,c:a.c+s.cost,g:a.g+s.profit}),{u:0,p:0,c:0,g:0});
+    let cls=c==='ODM'?'b-blue':c==='เคลม'?'b-amber':'b-red';
+    return `<tr><td><span class="badge ${cls}">${categoryDisplayName(activeModule,c)}</span></td><td class="num">${fmt(z.u)}</td><td class="num">${money(z.p)}</td><td class="num">${money(z.c)}</td><td class="num green">${money(z.g)}</td></tr>`
+  }).join('');
+
+  // Credit outstanding names aligned in one row by customer.
+  // July uses the actual current snapshot supplied by the user.
+  let creditRowsSource=[];
+  if(activeModule==='easy'){
+    creditRowsSource=getOutstandingStateForMonth(m).rows;
+  }
+
+  if(document.getElementById('creditNameRows')){
+    creditNameRows.innerHTML=creditRowsSource.map(r=>`<tr>
+      <td>${r.name}</td>
+      <td class="num">${r.old?fmt(r.old):'-'}</td>
+      <td class="num">${r.newv?fmt(r.newv):'-'}</td>
+      <td class="num"><strong>${fmt((r.old||0)+(r.newv||0))}</strong></td>
+    </tr>`).join('')||'<tr><td colspan="4">ไม่มีเครดิตคงค้างในเดือนนี้</td></tr>';
+  }
+  outTotal.textContent=fmt(creditRowsSource.reduce((a,r)=>a+(r.old||0)+(r.newv||0),0))+' Unit';
+
+  // Recent sales for selected month
+  const sorted=monthSales(m).slice().sort((a,b)=>b.date.localeCompare(a.date));
+  recentEasy.innerHTML=sorted.filter(s=>s.channel==='Easy Smart Lock').slice(0,7).map(s=>{let c=calcSale(s);return `<tr><td>${displayDate(s.date)}</td><td>${s.customer}</td><td class="num">${fmt(s.units)}</td><td class="num">${money(s.price)}</td><td class="num">${money(c.cost)}</td><td class="num green">${money(c.profit)}</td></tr>`}).join('')||'<tr><td colspan="6">ยังไม่มีรายการ</td></tr>';
+  recentODM.innerHTML=sorted.filter(s=>s.channel==='ODM').slice(0,7).map(s=>{let c=calcSale(s);return `<tr><td>${displayDate(s.date)}</td><td>${s.customer}</td><td class="num">${fmt(s.units)}</td><td class="num">${money(s.price)}</td><td class="num">${money(c.cost)}</td><td class="num green">${money(c.profit)}</td></tr>`}).join('')||'<tr><td colspan="6">ยังไม่มีรายการ</td></tr>';
+
+  // Easy credit reconciliation panel
+  const creditPanel=document.getElementById('easyCreditSummaryPanel');
+  if(creditPanel)creditPanel.style.display=activeModule==='easy'?'block':'none';
+  if(activeModule==='easy'){
+    creditOpening.textContent=fmt(creditState.opening);
+    creditCarryLongterm.textContent=fmt(creditState.carry);
+    creditImported.textContent=fmt(creditState.imported);
+    creditAvailable.textContent=fmt(creditState.total);
+    creditLongtermNow.textContent='-'+fmt(creditState.longNow);
+    creditSoldEasy.textContent='-'+fmt(creditState.sale1);
+    creditSoldODM.textContent='-'+fmt(creditState.sale2);
+    creditAdjustmentNet.textContent=creditState.sale3?'-'+fmt(creditState.sale3):'0';
+    creditBalance.textContent=fmt(creditState.balance);
+    nextMonthCarry.textContent=fmt(creditState.balance)+' เครดิต';
+  }
+
+  if(document.getElementById('dashboardCreditImportRows')){
+    if(activeModule==='easy'){
+      const monthImports=(db.creditImports||[])
+        .filter(x=>x.module==='easy'&&monthKey(x.date)===m&&['normal','odm'].includes(x.type))
+        .slice()
+        .sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+      dashboardCreditImportRows.innerHTML=monthImports.map(x=>`<tr>
+        <td>${displayDate(x.date)}</td>
+        <td><span class="badge ${x.type==='odm'?'b-blue':'b-green'}">${importTypeName(x.type)}</span></td>
+        <td>${x.odmTarget||'-'}</td>
+        <td class="num">${fmt(x.units)}</td>
+        <td class="num">${x.cpu===''||x.cpu==null?'-':money(x.cpu)}</td>
+        <td>${x.note||'-'}</td>
+      </tr>`).join('')||'<tr><td colspan="6">เดือนนี้ยังไม่มีการเติมเครดิต</td></tr>';
+    }else{
+      dashboardCreditImportRows.innerHTML='<tr><td colspan="6">รายการนี้ใช้เฉพาะ Easy Smart</td></tr>';
+    }
+  }
+
+
+  if(document.getElementById('dashboardCreditImportHistoryRows')){
+    if(activeModule==='easy'){
+      const history=(db.creditImports||[])
+        .filter(x=>x.module==='easy'&&monthKey(x.date)===m&&['normal','odm'].includes(x.type))
+        .slice()
+        .sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+      dashboardCreditImportHistoryRows.innerHTML=history.map(x=>`<tr>
+        <td>${displayDate(x.date)}</td>
+        <td><span class="badge ${x.type==='odm'?'b-blue':'b-green'}">${importTypeName(x.type)}</span></td>
+        <td>${x.odmTarget||'-'}</td>
+        <td class="num">${fmt(x.units)}</td>
+        <td class="num">${x.cpu===''||x.cpu==null?'-':money(x.cpu)}</td>
+        <td class="num">${x.cpu===''||x.cpu==null?'-':money((+x.units||0)*(+x.cpu||0))}</td>
+        <td>${x.note||'-'}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-light" onclick="editCreditImportFromDashboard('${x._id}')">แก้ไข</button>
+          <button class="btn btn-light" onclick="deleteCreditImport('${x._id}')">ลบ</button>
+        </td>
+      </tr>`).join('')||'<tr><td colspan="8">ยังไม่มีประวัติการเติมเครดิต</td></tr>';
+    }else{
+      dashboardCreditImportHistoryRows.innerHTML='<tr><td colspan="8">ประวัติการเติมเครดิตแยกเป็นของ Easy Smart เท่านั้น</td></tr>';
+    }
+  }
+
+
+  renderDashboardExpenses();
+
+  const easyTitle=document.getElementById('easySalesCardTitle');
+  if(easyTitle)easyTitle.textContent='รายการขาย '+categoryDisplayName('easy','Easy Smart Lock');
+  const odmTitle=document.getElementById('odmSalesCardTitle');
+  if(odmTitle)odmTitle.textContent='รายการขาย '+categoryDisplayName('easy','ODM');
+
+
+  const historyBadge=document.getElementById('creditHistoryMonthBadge');
+  if(historyBadge)historyBadge.textContent=monthLabel(m);
+
+}function renderTransactions(){
+  const sorted=filteredSales().slice().sort((a,b)=>b.date.localeCompare(a.date));
+
+  allEasySales.innerHTML=sorted.filter(s=>s.channel==='Easy Smart Lock').map(s=>{
+    let c=calcSale(s);
+    return `<tr>
+      <td>${displayDate(s.date)}</td><td>${s.customer}</td><td class="num">${fmt(s.units)}</td>
+      <td class="num">${money(s.price)}</td><td class="num">${money(c.cost)}</td>
+      <td class="num green">${money(c.profit)}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-light" onclick="editSale('${s._id}')">แก้ไข</button>
+        <button class="btn btn-light" onclick="delSale('${s._id}')">ลบ</button>
+      </td>
+    </tr>`
+  }).join('')||'<tr><td colspan="7">ยังไม่มีรายการ</td></tr>';
+
+  allODMSales.innerHTML=sorted.filter(s=>s.channel==='ODM').map(s=>{
+    let c=calcSale(s);
+    return `<tr>
+      <td>${displayDate(s.date)}</td><td>${s.customer}</td><td class="num">${fmt(s.units)}</td>
+      <td class="num">${money(s.price)}</td><td class="num">${money(c.cost)}</td>
+      <td class="num green">${money(c.profit)}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-light" onclick="editSale('${s._id}')">แก้ไข</button>
+        <button class="btn btn-light" onclick="delSale('${s._id}')">ลบ</button>
+      </td>
+    </tr>`
+  }).join('')||'<tr><td colspan="7">ยังไม่มีรายการ</td></tr>';
+
+  allOutstanding.innerHTML=filteredOutstanding().map(x=>`<tr>
+    <td><span class="badge ${x.lot==='old'?'b-red':'b-blue'}">${x.lot==='old'?'ทุนเก่า':'ทุนใหม่'}</span></td>
+    <td>${x.name}</td><td class="num">${fmt(x.units)}</td>
+    <td class="num">${x.cpu===''?'-':money(x.cpu)}</td><td>${displayDate(x.date)}</td>
+    <td><span class="badge b-blue">เครดิตระยะยาว</span></td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-light" onclick="editOutstanding('${x._id}')">แก้ไขข้อมูล</button>
+      <button class="btn btn-light" onclick="openAdjustCredit('${x._id}')">ปรับเครดิต</button>
+      <button class="btn btn-light" onclick="delOut('${x._id}')">ลบรายการ</button>
+    </td>
+  </tr>`).join('');
+
+  creditAdjustmentRows.innerHTML=db.creditAdjustments.slice().reverse().map(a=>`<tr>
+    <td>${displayDate(a.date)}</td>
+    <td>${a.name}</td>
+    <td class="num">${fmt(a.before)}</td>
+    <td class="num ${a.delta<0?'red':'green'}">${a.delta>0?'+':''}${fmt(a.delta)}</td>
+    <td class="num">${fmt(a.after)}</td>
+    <td>${a.note||'-'}</td>
+  </tr>`).join('')||'<tr><td colspan="6">ยังไม่มีประวัติการปรับเครดิต</td></tr>';
+
+  if(document.getElementById('creditImportRows')){
+    const imports=(db.creditImports||[]).filter(x=>x.module===activeModule).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    creditImportRows.innerHTML=imports.map(x=>`<tr>
+      <td>${displayDate(x.date)}</td>
+      <td><span class="badge ${x.type==='odm'?'b-blue':x.type==='opening'?'b-green':'b-amber'}">${importTypeName(x.type)}</span></td>
+      <td>${x.odmTarget||'-'}</td>
+      <td class="num">${fmt(x.units)}</td>
+      <td class="num">${x.cpu===''||x.cpu==null?'-':money(x.cpu)}</td>
+      <td class="num">${x.cpu===''||x.cpu==null?'-':money((+x.units||0)*(+x.cpu||0))}</td>
+      <td>${x.note||'-'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-light" onclick="editCreditImport('${x._id}')">แก้ไข</button>
+        <button class="btn btn-light" onclick="deleteCreditImport('${x._id}')">ลบ</button>
+      </td>
+    </tr>`).join('')||'<tr><td colspan="8">ยังไม่มีรายการเติมเครดิต</td></tr>';
+  }
+
+}
+
+function fillMonthlyExpenseMasters(){
+  if(!document.getElementById('monthlyExpenseMaster'))return;
+  const list=(db.expenseMasters||[]).filter(x=>x.module===activeModule&&x.enabled!==false);
+  monthlyExpenseMaster.innerHTML=list.map(x=>`<option value="${x._id}">${x.name}</option>`).join('');
+  const cur=list.find(x=>x._id===monthlyExpenseMaster.value)||list[0];
+  if(cur){
+    monthlyExpenseMaster.value=cur._id;
+    monthlyExpenseAmount.value=cur.defaultAmount||0;
+    monthlyExpenseCategoryLabel.value=expenseCategoryName(activeModule,cur.categoryCode);
+  }else{
+    monthlyExpenseAmount.value='';monthlyExpenseCategoryLabel.value='';
+  }
+}
+function addMonthlyExpense(){
+  const m=summaryMonth.value||months()[0];
+  if(!ensureMonthEditable(activeModule,m))return;
+  const master=db.expenseMasters.find(x=>x._id===monthlyExpenseMaster.value);if(!master)return alert('ยังไม่มีรายการค่าใช้จ่าย');
+  db.monthlyExpenses.push({_id:makeId('mexp'),module:activeModule,month:m,masterId:master._id,name:master.name,categoryCode:master.categoryCode,amount:+monthlyExpenseAmount.value||0,note:monthlyExpenseNote.value.trim()});
+  monthlyExpenseNote.value='';save();
+}
+function deleteMonthlyExpense(id){
+  const x=db.monthlyExpenses.find(v=>v._id===id);if(!x)return;
+  if(!ensureMonthEditable(x.module,x.month))return;
+  db.monthlyExpenses=db.monthlyExpenses.filter(v=>v._id!==id);save();
+}
+
+
+
+function expenseCategoryName(module,code){
+  if(code==='all')return 'ทั้งโมดูล';
+  return categoryDisplayName(module,code);
+}
+function fillExpenseTxnCategories(){
+  const el=document.getElementById('expenseTxnCategory');
+  if(!el)return;
+  const cats=[{code:'all',name:'ทั้งโมดูล'},...moduleCategories(activeModule)];
+  const old=el.value;
+  el.innerHTML=cats.map(c=>`<option value="${c.code}">${c.name}</option>`).join('');
+  if(old&&cats.some(c=>c.code===old))el.value=old;
+}
+function saveExpenseTxn(){
+  const date=toISODate(expenseDate.value);
+  const name=expenseTxnName.value.trim();
+  const categoryCode=expenseTxnCategory.value;
+  const amount=+expenseTxnAmount.value||0;
+  const note=expenseTxnNote.value.trim();
+
+  if(!date||!name||amount<=0)return alert('กรอกวันที่ รายการ และจำนวนเงินให้ครบ');
+  if(!ensureMonthEditable(activeModule,date.slice(0,7)))return;
+
+  const item={
+    _id:editExpenseTxnId||makeId('expense'),
+    module:activeModule,
+    month:date.slice(0,7),
+    date,
+    name,
+    categoryCode,
+    amount,
+    note
+  };
+
+  if(editExpenseTxnId){
+    const i=db.monthlyExpenses.findIndex(x=>x._id===editExpenseTxnId);
+    if(i<0)return alert('ไม่พบรายการที่ต้องการแก้ไข');
+    db.monthlyExpenses[i]=item;
+  }else{
+    db.monthlyExpenses.push(item);
+  }
+
+  cancelExpenseTxnEditFn();
+  save();
+}
+function editExpenseTxn(id){
+  const x=db.monthlyExpenses.find(v=>v._id===id);if(!x)return;
+  if(!ensureMonthEditable(x.module,x.month))return;
+  editExpenseTxnId=id;
+  expenseDate.value=displayDate(x.date);
+  expenseTxnName.value=x.name;
+  fillExpenseTxnCategories();
+  expenseTxnCategory.value=x.categoryCode||'all';
+  expenseTxnAmount.value=x.amount;
+  expenseTxnNote.value=x.note||'';
+  expenseTxnSaveBtn.textContent='บันทึกการแก้ไข';
+  cancelExpenseTxnEdit.style.display='inline-block';
+}
+function cancelExpenseTxnEditFn(){
+  editExpenseTxnId=null;
+  if(document.getElementById('expenseDate'))expenseDate.value='07/08/2026';
+  if(document.getElementById('expenseTxnName'))expenseTxnName.value='';
+  if(document.getElementById('expenseTxnAmount'))expenseTxnAmount.value='';
+  if(document.getElementById('expenseTxnNote'))expenseTxnNote.value='';
+  if(document.getElementById('expenseTxnSaveBtn'))expenseTxnSaveBtn.textContent='บันทึก';
+  if(document.getElementById('cancelExpenseTxnEdit'))cancelExpenseTxnEdit.style.display='none';
+}
+function deleteExpenseTxn(id){
+  const x=db.monthlyExpenses.find(v=>v._id===id);if(!x)return;
+  if(!ensureMonthEditable(x.module,x.month))return;
+  if(!confirm('ลบรายการค่าใช้จ่าย '+x.name+' หรือไม่?'))return;
+  db.monthlyExpenses=db.monthlyExpenses.filter(v=>v._id!==id);
+  save();
+}
+function monthExpenseTotal(module,m){
+  return db.monthlyExpenses.filter(x=>x.module===module&&x.month===m).reduce((a,x)=>a+(+x.amount||0),0);
+}
+function monthExpenseForCategory(module,m,categoryCode){
+  return db.monthlyExpenses
+    .filter(x=>x.module===module&&x.month===m&&(x.categoryCode==='all'||x.categoryCode===categoryCode))
+    .reduce((a,x)=>a+(+x.amount||0),0);
+}
+function renderExpenseTransactions(){
+  if(!document.getElementById('expenseTxnRows'))return;
+  fillExpenseTxnCategories();
+  const m=monthSelect.value||months()[0];
+  const rows=db.monthlyExpenses
+    .filter(x=>x.module===activeModule)
+    .slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+  expenseTxnRows.innerHTML=rows.map(x=>`<tr>
+    <td>${displayDate(x.date)}</td>
+    <td>${x.name}</td>
+    <td>${expenseCategoryName(x.module,x.categoryCode)}</td>
+    <td class="num">${money(x.amount)}</td>
+    <td>${x.note||'-'}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-light" onclick="editExpenseTxn('${x._id}')">แก้ไข</button>
+      <button class="btn btn-light" onclick="deleteExpenseTxn('${x._id}')">ลบ</button>
+    </td>
+  </tr>`).join('')||'<tr><td colspan="6">ยังไม่มีค่าใช้จ่าย</td></tr>';
+}
+function renderDashboardExpenses(){
+  if(!document.getElementById('dashboardExpenseRows'))return;
+  const m=selectedMonth();
+  const rows=db.monthlyExpenses
+    .filter(x=>x.module===activeModule&&x.month===m)
+    .slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+  dashboardExpenseRows.innerHTML=rows.map(x=>`<tr>
+    <td>${displayDate(x.date)}</td>
+    <td>${x.name}</td>
+    <td>${expenseCategoryName(x.module,x.categoryCode)}</td>
+    <td class="num">${money(x.amount)}</td>
+    <td>${x.note||'-'}</td>
+  </tr>`).join('')||'<tr><td colspan="5">เดือนนี้ยังไม่มีค่าใช้จ่าย</td></tr>';
+
+  dashboardExpenseTotal.textContent=money(rows.reduce((a,x)=>a+(+x.amount||0),0));
+}
+function goToExpenseTab(){
+  goPage('transactions');
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));
+  if(expenseTabBtn)expenseTabBtn.classList.add('active');
+  saleTab.style.display='none';
+  outstandingTab.style.display='none';
+  if(document.getElementById('creditImportTab'))creditImportTab.style.display='none';
+  expenseTab.style.display='block';
+
+  renderExpenseTransactions();
+}
+function renderSummary(){
+  const m=summaryMonth.value||months()[0],t=monthTotals(m);const expenseTotal=monthExpenseTotal(activeModule,m);const netProfit=t.profit-expenseTotal;
+
+  if(activeModule==='easy'){
+    const easy=monthSales(m).filter(x=>x.channel==='Easy Smart Lock').map(calcSale);
+    const odm=monthSales(m).filter(x=>x.channel==='ODM').map(calcSale);
+
+    const easyCredits=easy.reduce((a,s)=>a+(+s.units||0),0);
+    const odmGross=odm.reduce((a,s)=>a+(+s.profit||0),0);const odmProfit=odmGross-monthExpenseForCategory('easy',m,'ODM');
+    const ownerEasyDividend=easyCredits*(+db.dividendSettings.easyPerCredit||0);
+    const ownerODMDividend=odmProfit*((+db.dividendSettings.easyOdmPct||0)/100);
+    const ownerDividend=ownerEasyDividend+ownerODMDividend;
+
+    const eachOtherDividend=netProfit*((+db.dividendSettings.easyOtherPct||0)/100);
+    const othersDividend=eachOtherDividend*(+db.dividendSettings.easyPartnerCount||3);
+    const totalDividend=ownerDividend+othersDividend;
+    const investorPayout=t.cost+netProfit-totalDividend;
+
+    sSales.textContent=money(t.sales);
+    sCost.textContent=money(t.cost);
+    sProfit.textContent=money(netProfit);
+    sOwnerDividend.textContent=money(ownerDividend);
+    sOthersDividend.textContent=money(othersDividend);
+    sEachOtherDividend.textContent=(+db.dividendSettings.easyPartnerCount||3)+' คน · คนละ '+money(eachOtherDividend);
+    sInvestorPayout.textContent=money(investorPayout);
+
+    easyBase.textContent=fmt(easyCredits)+' เครดิต';
+    const rateCell=easyDividendRow?.parentElement?.children?.[2]; if(rateCell)rateCell.textContent=fmt(db.dividendSettings.easyPerCredit)+' บาท / เครดิต';
+    odmBase.textContent='กำไร '+money(odmProfit);
+    allProfitBase1.textContent='กำไรรวม '+money(t.profit);
+    allProfitBase2.textContent='กำไรรวม '+money(t.profit);
+    allProfitBase3.textContent='กำไรรวม '+money(t.profit);
+
+    easyDividendRow.textContent=money(ownerEasyDividend);
+    odmDividendRow.textContent=money(ownerODMDividend);
+    other1DividendRow.textContent=money(eachOtherDividend);
+    other2DividendRow.textContent=money(eachOtherDividend);
+    other3DividendRow.textContent=money(eachOtherDividend);
+    totalDividendRow.textContent=money(totalDividend);
+
+    investCost.textContent=money(t.cost);
+    investProfit.textContent=money(netProfit);
+    investOwner.textContent='-'+money(ownerDividend);
+    investOthers.textContent='-'+money(othersDividend);
+    investEachOther.textContent='(คนละ '+money(eachOtherDividend)+')';
+    investTotal.textContent=money(investorPayout);
+  }else{
+    const units=t.units;
+    const ownerDividend=computeRule(
+      db.dividendSettings.enrollOwnerMethod||'none',
+      +db.dividendSettings.enrollOwnerRate||0,
+      netProfit,units
+    );
+    const eachOtherDividend=computeRule(
+      db.dividendSettings.enrollOtherMethod||'none',
+      +db.dividendSettings.enrollOtherRate||0,
+      netProfit,units
+    );
+    const partnerCount=+db.dividendSettings.enrollPartnerCount||0;
+    const othersDividend=eachOtherDividend*partnerCount;
+    const totalDividend=ownerDividend+othersDividend;
+    const investorPayout=t.cost+netProfit-totalDividend;
+
+    sSales.textContent=money(t.sales);sCost.textContent=money(t.cost);sProfit.textContent=money(netProfit);
+    sOwnerDividend.textContent=money(ownerDividend);sOthersDividend.textContent=money(othersDividend);
+    sEachOtherDividend.textContent=partnerCount+' คน · คนละ '+money(eachOtherDividend);
+    sInvestorPayout.textContent=money(investorPayout);
+
+    easyBase.textContent=fmt(units)+' เครดิต';
+    odmBase.textContent='กำไร '+money(t.profit);
+    allProfitBase1.textContent='EnrollOne '+money(t.profit);
+    allProfitBase2.textContent='EnrollOne '+money(t.profit);
+    allProfitBase3.textContent='EnrollOne '+money(t.profit);
+    easyDividendRow.textContent=money(ownerDividend);odmDividendRow.textContent=money(0);
+    other1DividendRow.textContent=money(eachOtherDividend);other2DividendRow.textContent=money(eachOtherDividend);other3DividendRow.textContent=money(eachOtherDividend);
+    totalDividendRow.textContent=money(totalDividend);
+    investCost.textContent=money(t.cost);investProfit.textContent=money(netProfit);
+    investOwner.textContent='-'+money(ownerDividend);investOthers.textContent='-'+money(othersDividend);
+    investEachOther.textContent='('+partnerCount+' คน · คนละ '+money(eachOtherDividend)+')';
+    investTotal.textContent=money(investorPayout);
+  }
+
+  fillMonthlyExpenseMasters();
+  if(document.getElementById('monthlyExpenseRows')){
+    const rows=db.monthlyExpenses.filter(x=>x.module===activeModule&&x.month===m);
+    monthlyExpenseRows.innerHTML=rows.map(x=>`<tr>
+      <td>${x.name}</td>
+      <td>${expenseCategoryName(x.module,x.categoryCode)}</td>
+      <td class="num">${money(x.amount)}</td>
+      <td>${x.note||'-'}</td>
+      <td class="num"><button class="btn btn-light" onclick="deleteMonthlyExpense('${x._id}')">ลบ</button></td>
+    </tr>`).join('')||'<tr><td colspan="5">ยังไม่มีค่าใช้จ่ายเดือนนี้</td></tr>';
+  }
+
+
+  
+}function renderAll(){fillMonths();fillCustomerMasterList();fillSaleCostProfiles();renderSaleCategoryOptions();renderDashboard();renderTransactions();renderExpenseTransactions();renderDashboardExpenses();renderSummary();renderSettings();updateCloseMonthButton()}
+function addSale(){
+  const el=id=>document.getElementById(id);
+  const profile=getCostProfileById(el('saleCostProfile').value)||getDefaultCostProfile(activeModule);
+  let s={
+    module:activeModule,
+    date:toISODate(el('saleDate').value),
+    channel:el('saleChannel').value,
+    customer:el('saleCustomer').value.trim(),
+    units:+el('saleUnits').value||0,
+    price:+el('salePrice').value||0,
+    costProfileId:profile?profile._id:'',
+    costProfileName:profile?profile.name:'',
+    cpu:profile?+profile.value||0:+el('saleCpu').value||0
+  };
+  if(!s.date||!s.customer)return alert('ใส่วันที่รูปแบบ dd/mm/yyyy และร้านค้าก่อน');
+  const carr=db.customersByModule[activeModule]||(db.customersByModule[activeModule]=[]);
+  if(!carr.includes(s.customer))carr.push(s.customer);
+  if(!ensureMonthEditable(activeModule,s.date.slice(0,7)))return;
+
+  if(editSaleId){
+    const idx=db.sales.findIndex(x=>x._id===editSaleId);
+    if(idx<0) return alert('ไม่พบรายการที่ต้องการแก้ไข');
+    s._id=editSaleId;
+    db.sales[idx]=s;
+    editSaleId=null;
+  }else{
+    s._id=makeId('sale');
+    db.sales.push(s);
+  }
+
+  el('saleCustomer').value='';
+  el('saleUnits').value='';
+  el('salePrice').value='';
+  el('saleCpu').value='60';
+  el('saleSaveBtn').textContent='บันทึกการขาย';
+  el('cancelSaleEdit').style.display='none';
+  if(activeModule==='easy')rollEasyCreditForward(s.date.slice(0,7));
+  save();
+}
+function editSale(id){
+  const s=db.sales.find(x=>x._id===id);
+  if(!s)return alert('ไม่พบรายการ');
+  if(!ensureMonthEditable(s.module||'easy',monthKey(s.date)))return;
+  editSaleId=id;
+  if(s.module&&s.module!==activeModule)switchModule(s.module);
+  document.getElementById('saleDate').value=displayDate(s.date)==='-'?'':displayDate(s.date);
+  renderSaleCategoryOptions(s.channel);
+  document.getElementById('saleCustomer').value=s.customer||'';
+  document.getElementById('saleUnits').value=s.units??'';
+  document.getElementById('salePrice').value=s.price??'';
+  fillSaleCostProfiles(s.costProfileId||null);
+  if(!s.costProfileId){
+    const matching=db.costProfiles.find(x=>x.module===s.module&&+x.value===+s.cpu);
+    if(matching){saleCostProfile.value=matching._id;applySelectedCostProfile();}
+    else document.getElementById('saleCpu').value=s.cpu??'';
+  }
+  document.getElementById('saleSaveBtn').textContent='บันทึกการแก้ไข';
+  document.getElementById('cancelSaleEdit').style.display='inline-block';
+  document.getElementById('transactions').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function cancelSaleEdit(){
+  editSaleId=null;
+  document.getElementById('saleCustomer').value='';
+  document.getElementById('saleUnits').value='';
+  document.getElementById('salePrice').value='';
+  document.getElementById('saleCpu').value='60';
+  document.getElementById('saleSaveBtn').textContent='บันทึกการขาย';
+  document.getElementById('cancelSaleEdit').style.display='none';
+}
+function delSale(id){
+  const row=db.sales.find(x=>x._id===id);
+  if(row&&!ensureMonthEditable(row.module||'easy',monthKey(row.date)))return;
+  if(!confirm('ลบรายการขายนี้หรือไม่?'))return;
+  db.sales=db.sales.filter(x=>x._id!==id);
+  if(editSaleId===id)cancelSaleEdit();
+  save();
+}
+function addOutstanding(){
+  const el=id=>document.getElementById(id);
+  let x={
+    module:activeModule,
+    lot:el('outLot').value,
+    name:el('outName').value.trim(),
+    units:+el('outUnits').value||0,
+    cpu:el('outCpu').value===''?'':+el('outCpu').value,
+    date:toISODate(el('outDate').value)
+  };
+  if(!x.name||!x.units)return alert('ใส่ร้านค้า/คู่ค้า และจำนวนเครดิตก่อน');
+  if(x.date&&!ensureMonthEditable(activeModule,x.date.slice(0,7)))return;
+
+  if(editOutId){
+    const idx=db.outstanding.findIndex(v=>v._id===editOutId);
+    if(idx<0)return alert('ไม่พบรายการที่ต้องการแก้ไข');
+    // preserve the current credit amount here only if user actually edits it.
+    x._id=editOutId;
+    db.outstanding[idx]=x;
+    editOutId=null;
+  }else{
+    x._id=makeId('credit');
+    db.outstanding.push(x);
+  }
+
+  el('outName').value='';
+  el('outUnits').value='';
+  el('outCpu').value='';
+  el('outSaveBtn').textContent='บันทึกเครดิตคงค้าง';
+  el('cancelOutEdit').style.display='none';
+  if(activeModule==='easy')rollEasyCreditForward(x.date.slice(0,7));
+  save();
+}
+function editOutstanding(id){
+  const x=db.outstanding.find(v=>v._id===id);
+  if(!x)return alert('ไม่พบรายการ');
+  if(x.date&&!ensureMonthEditable(x.module||'easy',monthKey(x.date)))return;
+  editOutId=id;
+  if(x.module&&x.module!==activeModule)switchModule(x.module);
+  document.getElementById('outLot').value=x.lot||'old';
+  document.getElementById('outName').value=x.name||'';
+  document.getElementById('outUnits').value=x.units??'';
+  document.getElementById('outCpu').value=x.cpu??'';
+  document.getElementById('outDate').value=displayDate(x.date)==='-'?'':displayDate(x.date);
+  document.getElementById('outSaveBtn').textContent='บันทึกการแก้ไข';
+  document.getElementById('cancelOutEdit').style.display='inline-block';
+
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));
+  const btn=[...document.querySelectorAll('.tabs button')].find(b=>b.dataset.tab==='outstanding');
+  if(btn)btn.classList.add('active');
+  document.getElementById('saleTab').style.display='none';
+  document.getElementById('outstandingTab').style.display='block';
+  document.getElementById('transactions').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function openAdjustCredit(id){
+  const x=db.outstanding.find(v=>v._id===id);
+  if(!x)return alert('ไม่พบรายการ');
+  if(x.date&&!ensureMonthEditable(x.module||'easy',monthKey(x.date)))return;
+  adjustOutId=id;
+  document.getElementById('adjustName').value=x.name||'';
+  document.getElementById('adjustCurrent').value=x.units??0;
+  document.getElementById('adjustNew').value=x.units??0;
+  document.getElementById('adjustNote').value='';
+  document.getElementById('adjustCreditPanel').style.display='block';
+  document.getElementById('adjustCreditPanel').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function cancelAdjustCredit(){
+  adjustOutId=null;
+  document.getElementById('adjustCreditPanel').style.display='none';
+}
+function saveCreditAdjustment(){
+  if(!adjustOutId)return;
+  const idx=db.outstanding.findIndex(v=>v._id===adjustOutId);
+  if(idx<0)return alert('ไม่พบรายการ');
+  const x=db.outstanding[idx];
+  const before=+x.units||0;
+  const after=+document.getElementById('adjustNew').value||0;
+  if(after<0)return alert('ยอดเครดิตใหม่ต้องไม่ติดลบ');
+  const delta=after-before;
+  const today=new Date();
+  const iso=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  db.creditAdjustments.push({
+    date:iso,
+    creditId:x._id,
+    name:x.name,
+    before,
+    delta,
+    after,
+    note:document.getElementById('adjustNote').value.trim()
+  });
+  db.outstanding[idx]={...x,units:after};
+  if(activeModule==='easy'&&x.date)rollEasyCreditForward(monthKey(x.date));
+  adjustOutId=null;
+  document.getElementById('adjustCreditPanel').style.display='none';
+  save();
+}
+function cancelOutEdit(){
+  editOutId=null;
+  document.getElementById('outName').value='';
+  document.getElementById('outUnits').value='';
+  document.getElementById('outCpu').value='';
+  document.getElementById('outSaveBtn').textContent='บันทึกเครดิตคงค้าง';
+  document.getElementById('cancelOutEdit').style.display='none';
+}
+function delOut(id){
+  const old=db.outstanding.find(x=>x._id===id);
+  if(old&&old.date&&!ensureMonthEditable(old.module||'easy',monthKey(old.date)))return;
+  if(!confirm('ลบเครดิตคงค้างรายการนี้หรือไม่?'))return;
+  db.outstanding=db.outstanding.filter(x=>x._id!==id);
+  if(editOutId===id)cancelOutEdit();
+  if(adjustOutId===id)cancelAdjustCredit();
+  if(activeModule==='easy'&&old&&old.date)rollEasyCreditForward(monthKey(old.date));
+  save();
+}
+
+function saveCreditImport(){
+  if(activeModule!=='easy') return alert('การเติมเครดิตชุดนี้ใช้กับ Easy Smart');
+  const date=toISODate(document.getElementById('importDate').value);
+  const type=document.getElementById('importType').value;
+  const units=+document.getElementById('importUnits').value||0;
+  const cpu=document.getElementById('importCpu').value===''?'':+document.getElementById('importCpu').value;
+  const odmTarget=document.getElementById('importOdmTarget').value.trim();
+  const note=document.getElementById('importNote').value.trim();
+  if(!date||!units)return alert('ใส่วันที่ dd/mm/yyyy และจำนวนเครดิต');
+  if(!ensureMonthEditable('easy',date.slice(0,7)))return;
+  if(type==='odm'&&!odmTarget)return alert('กรุณาระบุว่าเติมให้ ODM ไหน');
+
+  const item={_id:editImportId||makeId('import'),module:'easy',date,type,units,cpu,odmTarget,note};
+  if(editImportId){
+    const i=db.creditImports.findIndex(x=>x._id===editImportId);
+    if(i<0)return alert('ไม่พบรายการที่ต้องการแก้ไข');
+    db.creditImports[i]=item;
+  }else{
+    db.creditImports.push(item);
+  }
+  cancelImportEditFn();
+  rollEasyCreditForward(date.slice(0,7));
+  save();
+}
+
+function editCreditImportFromDashboard(xid){
+  goToCreditImport();
+  setTimeout(()=>editCreditImport(xid),50);
+}
+function editCreditImport(xid){
+  const x=db.creditImports.find(v=>v._id===xid);
+  if(!x)return;
+  if(!ensureMonthEditable('easy',monthKey(x.date)))return;
+  editImportId=xid;
+  document.getElementById('importDate').value=displayDate(x.date)==='-'?'':displayDate(x.date);
+  document.getElementById('importType').value=x.type||'normal';
+  document.getElementById('importUnits').value=x.units??'';
+  document.getElementById('importCpu').value=x.cpu??'';
+  document.getElementById('importOdmTarget').value=x.odmTarget||'';
+  document.getElementById('importNote').value=x.note||'';
+  document.getElementById('importSaveBtn').textContent='บันทึกการแก้ไข';
+  document.getElementById('cancelImportEdit').style.display='inline-block';
+}
+function cancelImportEditFn(){
+  editImportId=null;
+  if(document.getElementById('importDate'))document.getElementById('importDate').value='07/08/2026';
+  if(document.getElementById('importType'))document.getElementById('importType').value='normal';
+  if(document.getElementById('importUnits'))document.getElementById('importUnits').value='';
+  if(document.getElementById('importCpu'))document.getElementById('importCpu').value='';
+  if(document.getElementById('importOdmTarget'))document.getElementById('importOdmTarget').value='';
+  if(document.getElementById('importNote'))document.getElementById('importNote').value='';
+  if(document.getElementById('importSaveBtn'))document.getElementById('importSaveBtn').textContent='บันทึก';
+  if(document.getElementById('cancelImportEdit'))document.getElementById('cancelImportEdit').style.display='none';
+}
+function deleteCreditImport(xid){
+  const x=db.creditImports.find(v=>v._id===xid);
+  if(x&&!ensureMonthEditable('easy',monthKey(x.date)))return;
+  if(!confirm('ลบรายการเครดิตนี้หรือไม่?'))return;
+  db.creditImports=db.creditImports.filter(x=>x._id!==xid);
+  if(editImportId===xid)cancelImportEditFn();
+  save();
+}
+function goToCreditImport(){
+  if(activeModule!=='easy')return;
+  goPage('transactions');
+  if(activeModule!=='easy')switchModule('easy');
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));
+  const b=document.getElementById('creditImportTabBtn'); if(b)b.classList.add('active');
+  saleTab.style.display='none';
+  outstandingTab.style.display='none';
+  if(document.getElementById('creditImportTab'))document.getElementById('creditImportTab').style.display='block';
+}
+function addDeduction(){if(!dedName.value.trim())return;db.deductions.push({name:dedName.value.trim(),amount:+dedAmount.value||0});dedName.value='';dedAmount.value='';save()}
+function delDed(i){db.deductions.splice(i,1);save()}
+function addShare(){if(!shareName.value.trim())return;db.shares.push({name:shareName.value.trim(),pct:+sharePct.value||0});shareName.value='';sharePct.value='';save()}
+function closeMonth(){
+  const m=summaryMonth.value||months()[0];
+  const key=lockKey(activeModule,m);
+
+  if(isMonthLocked(activeModule,m)){
+    if(!confirm('เดือน '+monthLabel(m)+' ถูกสรุปแล้ว ต้องการยกเลิกการสรุปและปลดล็อกเพื่อแก้ไขหรือไม่?'))return;
+    db.locked=db.locked.filter(x=>x!==key);
+    delete db.monthSnapshots[key];
+    updateCloseMonthButton();
+    save();
+    alert('ปลดล็อก '+monthLabel(m)+' แล้ว');
+    return;
+  }
+
+  if(!confirm('ยืนยันสรุปสิ้นเดือน '+monthLabel(m)+' หรือไม่?\nหลังยืนยัน รายการเดือนนี้จะถูกล็อก และระบบจะยกยอดไปเดือนถัดไป'))return;
+
+  const snap=snapshotCurrentMonth(activeModule,m);
+
+  if(activeModule==='easy'){
+    const next=nextMonthKey(m);
+    db.monthlyCreditCarry[next]=snap.creditClosing;
+    db.monthlyOutstandingCarry[next]={
+      total:snap.outstanding.total,
+      rows:cloneRows(snap.outstanding.rows)
+    };
+  }
+
+  db.locked.push(key);
+  updateCloseMonthButton();
+  save();
+  alert('สรุปสิ้นเดือน '+monthLabel(m)+' เรียบร้อย และยกยอดไปเดือนถัดไปแล้ว');
+}
+
+function applyModuleUI(){
+  const easy=activeModule==='easy';
+  document.body.dataset.module=activeModule;
+  const themeMeta=document.querySelector('meta[name="theme-color"]');
+  if(themeMeta)themeMeta.setAttribute('content',easy?'#e5252a':'#004096');
+  document.getElementById('moduleEasyBtn').classList.toggle('active',easy);
+  document.getElementById('moduleEnrollBtn').classList.toggle('active',!easy);
+  document.getElementById('brandText').textContent=easy?'Easy Smart':'EnrollOne';
+  document.getElementById('brandLogo').textContent=easy?'E':'O';
+  document.getElementById('dashboardTitle').textContent='ภาพรวม '+(easy?'Easy Smart':'EnrollOne');
+  document.getElementById('dashboardSub').textContent=easy?'ยอดขาย เครดิต และกำไร · ข้อมูลต่อเนื่องรายเดือน':'ยอดขาย ต้นทุน และกำไร · โมดูล EnrollOne แยกอิสระ';
+  document.getElementById('transactionTitle').textContent='บันทึกรายการ '+(easy?'Easy Smart':'EnrollOne');
+  document.getElementById('transactionSub').textContent=easy?'รายการขายและเครดิตของ Easy Smart':'รายการขายและเครดิตของ EnrollOne';
+  document.getElementById('summaryTitle').textContent='สรุปสิ้นเดือน '+(easy?'Easy Smart':'EnrollOne');
+  document.getElementById('summarySub').textContent=easy?'สรุปยอดขายและปันผลของ Easy Smart':'สรุปยอดขายและปันผลของ EnrollOne';
+  const l1=document.getElementById('ownerDividendLabel'),l2=document.getElementById('ownerSecondDividendLabel');
+  if(l1)l1.textContent=easy?'พี่ · '+categoryDisplayName('easy','Easy Smart Lock'):'พี่ · '+categoryDisplayName('enroll','EnrollOne');
+  if(l2)l2.textContent=easy?'พี่ · '+categoryDisplayName('easy','ODM'):'สูตรเสริม';
+
+  renderSaleCategoryOptions();
+  const impBtn=document.getElementById('creditImportTabBtn');
+  if(impBtn)impBtn.style.display=easy?'inline-block':'none';
+  const impTab=document.getElementById('creditImportTab');
+  if(!easy&&impTab)impTab.style.display='none';
+
+  // Complete module separation: Easy-specific credit tools never appear in EnrollOne.
+  const creditTabBtn=[...document.querySelectorAll('.tabs button')].find(b=>b.dataset.tab==='outstanding');
+  if(creditTabBtn)creditTabBtn.style.display='inline-block';
+  const expBtn=document.getElementById('expenseTabBtn');if(expBtn)expBtn.style.display='inline-block';
+
+  const ctx=document.getElementById('moduleContext');
+  if(ctx)ctx.textContent=easy?'EASY SMART · CREDIT & UNIT':'ENROLLONE · ENROLLMENT';
+  fillSaleCostProfiles();
+  renderSettings();
+
+  // EnrollOne สร้างเครดิตได้เอง จึงไม่มีเมนู "เติมเครดิต"
+  const creditImportBtn=document.getElementById('creditImportTabBtn');
+  if(creditImportBtn)creditImportBtn.style.display=easy?'inline-block':'none';
+
+  // ถ้าสลับมา EnrollOne ขณะเปิดแท็บเติมเครดิต ให้กลับไปหน้าบันทึกการขาย
+  const creditImportPanel=document.getElementById('creditImportTab');
+  if(!easy && creditImportPanel && creditImportPanel.style.display!=='none'){
+    creditImportPanel.style.display='none';
+    if(typeof saleTab!=='undefined')saleTab.style.display='block';
+    document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));
+    const saleBtn=[...document.querySelectorAll('.tabs button')].find(b=>b.dataset.tab==='sale');
+    if(saleBtn)saleBtn.classList.add('active');
+  }
+
+}function switchModule(module){
+  activeModule=module;
+  cancelSaleEdit();
+  cancelOutEdit();
+  applyModuleUI();
+  fillCustomerMasterList();
+fillSaleCostProfiles();
+renderAll();
+}
+
+function updateCloseMonthButton(){
+  const btn=document.getElementById('closeMonthBtn');
+  if(!btn)return;
+  const m=summaryMonth.value||months()[0];
+  if(isMonthLocked(activeModule,m)){
+    btn.textContent='✓ สรุปแล้ว · กดเพื่อปลดล็อก';
+    btn.className='btn btn-light';
+  }else{
+    btn.textContent='ยืนยันสรุปสิ้นเดือน';
+    btn.className='btn btn-primary';
+  }
+}
+function goPage(id){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));if(id==='summary'){renderSummary();renderExpenseMasterPanel()}if(id==='settings'){settingsModule=activeModule;renderSettings()}}
+
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>goPage(b.dataset.page));
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  saleTab.style.display=b.dataset.tab==='sale'?'block':'none';
+  expenseTab.style.display=b.dataset.tab==='expense'?'block':'none';
+  outstandingTab.style.display=b.dataset.tab==='outstanding'?'block':'none';
+  if(document.getElementById('creditImportTab'))document.getElementById('creditImportTab').style.display=b.dataset.tab==='creditImport'?'block':'none';
+});
+if(document.getElementById('importType'))importType.onchange=()=>{
+  const isOdm=importType.value==='odm';
+  importOdmTarget.placeholder=isOdm?'เช่น Space One':'ไม่จำเป็นสำหรับประเภทนี้';
+};
+if(document.getElementById('monthlyExpenseMaster'))monthlyExpenseMaster.onchange=()=>{
+  const x=db.expenseMasters.find(v=>v._id===monthlyExpenseMaster.value);
+  if(x){monthlyExpenseAmount.value=x.defaultAmount||0;monthlyExpenseCategoryLabel.value=expenseCategoryName(activeModule,x.categoryCode)}
+};
+monthSelect.onchange=renderDashboard;summaryMonth.onchange=()=>{renderSummary();updateCloseMonthButton()};
+saleDate.value='07/08/2026';outDate.value='07/08/2026';if(document.getElementById('expenseDate'))expenseDate.value='07/08/2026';if(document.getElementById('importDate'))importDate.value='07/08/2026';
+renderAll();
+</script>
+<div style="display:none" id="appBuild">Production v1.2.2 · EnrollOne Full Menu Minus Top-up</div>
+
+<script>
+(function(){
+  const PIN_HASH="82b87b56b096bcf4be784d993717c10443d843ebc880e4dae7cd5d049240d451";
+  async function sha256(text){
+    const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+  }
+  function unlock(){
+    document.getElementById("pinGate").style.display="none";
+    sessionStorage.setItem("easyEnrollUnlocked","1");
+  }
+  async function checkPin(){
+    const input=document.getElementById("pinInput");
+    const err=document.getElementById("pinError");
+    err.textContent="";
+    if(await sha256(input.value)===PIN_HASH){
+      unlock();
+    }else{
+      input.value="";
+      err.textContent="PIN ไม่ถูกต้อง";
+      input.focus();
+    }
+  }
+  window.addEventListener("DOMContentLoaded",()=>{
+    if(sessionStorage.getItem("easyEnrollUnlocked")==="1"){
+      unlock();
+      return;
+    }
+    const input=document.getElementById("pinInput");
+    document.getElementById("pinEnterBtn").addEventListener("click",checkPin);
+    input.addEventListener("keydown",e=>{ if(e.key==="Enter") checkPin(); });
+    input.focus();
+  });
+})();
+</script>
+
+</body>
+</html>
