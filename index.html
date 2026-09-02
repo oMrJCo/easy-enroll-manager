@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#e5252a">
-<title>Easy Smart & EnrollOne Business Manager v1.2.2</title>
+<title>Easy Smart & EnrollOne Online</title>
 <style>
 :root{
   --bg:#f5f7fb; --card:#fff; --text:#172033; --muted:#748099;
@@ -358,13 +358,181 @@ body[data-module="enroll"] .kpi:after{background:var(--brand-gradient)}
 }
 
 
+.cloud-status{margin:0 3px 8px;padding:7px 9px;border-radius:9px;font-size:10.5px;font-weight:700;text-align:center;background:#fff7df;color:#946200;border:1px solid #f7e7ad}
+.cloud-status[data-state="ok"]{background:#edf9f3;color:#12805a;border-color:#d9efe5}
+.cloud-status[data-state="error"]{background:#fff0f1;color:#cf2630;border-color:#ffd9dc}
+.pin-gate{position:fixed;inset:0;z-index:99999;background:rgba(10,14,22,.96);display:flex;align-items:center;justify-content:center;padding:20px}
+.pin-card{width:min(360px,100%);background:#fff;border-radius:18px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.35)}
+.pin-card h2{margin:0 0 6px;font-size:22px;color:#111827}
+.pin-card p{margin:0 0 16px;color:#6b7280;font-size:13px}
+.pin-card input{width:100%;box-sizing:border-box;font-size:28px;letter-spacing:8px;text-align:center;padding:12px;border:1px solid #d1d5db;border-radius:12px}
+.pin-card button{width:100%;margin-top:12px;padding:12px;border:0;border-radius:12px;background:#111827;color:#fff;font-weight:700;cursor:pointer}
+.pin-error{min-height:18px;margin-top:8px;text-align:center;color:#dc2626;font-size:12px}
+
+
 .sales-month-card{background:#fff;border:1px solid var(--line);border-radius:16px;margin:0 0 14px;overflow:hidden;box-shadow:var(--shadow)}
 .sales-month-card>summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;justify-content:space-between;gap:12px;align-items:center;background:var(--surface);font-size:15px}
-.sales-month-card>summary::-webkit-details-marker{display:none}.sales-month-card>summary span{font-size:12px;color:var(--muted);font-weight:600}.sales-month-card[open]>summary{border-bottom:1px solid var(--line)}
+.sales-month-card>summary::-webkit-details-marker{display:none}
+.sales-month-card>summary span{font-size:12px;color:var(--muted);font-weight:600}
+.sales-month-card[open]>summary{border-bottom:1px solid var(--line)}
 .sales-month-grid{padding:14px}.sales-month-grid .card{box-shadow:none}
+.payment-lot-hint{font-size:11px;color:var(--muted);margin-top:6px}
+
+
+/* Outstanding payment responsive layout */
+.outstanding-payment-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  align-items:end;
+}
+.outstanding-payment-grid .field:nth-child(5),
+.outstanding-payment-grid .field:nth-child(6),
+.outstanding-payment-grid .field:nth-child(7){
+  grid-column:span 1;
+}
+.outstanding-payment-grid .field:nth-child(8){
+  align-self:end;
+}
+@media (min-width:1350px){
+  .outstanding-payment-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:12px;
+  }
+  .outstanding-payment-grid .field:nth-child(7){
+    grid-column:span 3;
+  }
+  .outstanding-payment-grid .field:nth-child(8){
+    grid-column:span 1;
+  }
+}
+@media (max-width:1100px){
+  .outstanding-payment-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .outstanding-payment-grid .field:nth-child(7){
+    grid-column:1 / -1;
+  }
+  .outstanding-payment-grid .field:nth-child(8){
+    grid-column:1 / -1;
+  }
+  .outstanding-payment-grid .field:nth-child(8) button{
+    width:100%;
+  }
+}
+@media (max-width:640px){
+  .outstanding-payment-grid{
+    grid-template-columns:1fr;
+  }
+  .outstanding-payment-grid .field{
+    grid-column:1 !important;
+  }
+}
+
+
+@media (max-width:640px){
+  #outstandingPaymentPanel{
+    padding:14px;
+  }
+  #outstandingPaymentPanel .panel-title{
+    align-items:flex-start;
+    gap:8px;
+    flex-direction:column;
+  }
+  #outstandingPaymentPanel .badge{
+    white-space:normal;
+    line-height:1.35;
+  }
+}
+
+
+.outstanding-payment-grid .field{
+  min-width:0;
+}
+.outstanding-payment-grid .field input,
+.outstanding-payment-grid .field select,
+.outstanding-payment-grid .field button{
+  width:100%;
+}
+
+
+/* Keep form controls aligned even when only some fields have helper text */
+.outstanding-payment-grid{
+  align-items:start;
+}
+.outstanding-payment-grid .field{
+  display:grid;
+  grid-template-rows:16px 40px 18px;
+  align-items:start;
+}
+.outstanding-payment-grid .field label{
+  min-height:16px;
+  margin-bottom:0;
+}
+.outstanding-payment-grid .field input,
+.outstanding-payment-grid .field select,
+.outstanding-payment-grid .field button{
+  height:40px;
+  min-height:40px;
+}
+.outstanding-payment-grid .payment-lot-hint{
+  min-height:18px;
+  line-height:18px;
+  margin-top:0;
+}
+.outstanding-payment-grid .field:nth-child(8){
+  grid-template-rows:16px 40px 18px;
+}
+
+
+#saleTab .form-grid{
+  align-items:start;
+}
+#saleTab .form-grid .field{
+  display:grid;
+  grid-template-rows:16px 40px 18px;
+  align-items:start;
+}
+#saleTab .form-grid .field label{
+  min-height:16px;
+  margin-bottom:0;
+}
+#saleTab .form-grid .field input,
+#saleTab .form-grid .field select{
+  height:40px;
+  min-height:40px;
+}
+#saleTab #saleCostHint{
+  min-height:18px;
+  line-height:18px;
+  margin-top:0;
+}
+
 </style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const firestore = getFirestore(app);
+window.__cloud = { db: firestore, doc, getDoc, setDoc, onSnapshot };
+window.dispatchEvent(new Event("firebase-ready"));
+</script>
+
 </head>
 <body data-module="easy">
+<div id="pinGate" class="pin-gate">
+  <div class="pin-card">
+    <h2>เข้าสู่ระบบ</h2>
+    <p>กรอก PIN เพื่อเข้าใช้งาน</p>
+    <input id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
+    <button id="pinEnterBtn" type="button">เข้าใช้งาน</button>
+    <div id="pinError" class="pin-error"></div>
+  </div>
+</div>
+
 <div class="app">
   <aside class="sidebar">
     <div class="brand"><div class="logo" id="brandLogo">E</div><span id="brandText">Easy Smart</span></div>
@@ -372,6 +540,7 @@ body[data-module="enroll"] .kpi:after{background:var(--brand-gradient)}
       <button id="moduleEasyBtn" class="active" onclick="switchModule('easy')">Easy Smart</button>
       <button id="moduleEnrollBtn" onclick="switchModule('enroll')">EnrollOne</button>
     </div>
+    <div id="cloudStatus" class="cloud-status" data-state="warn">กำลังเชื่อม Cloud…</div>
     <div id="moduleContext" style="font-size:11px;color:#8a94a8;padding:0 8px 10px">ระบบ Easy Smart แยกอิสระ</div>
     <div class="nav">
       <button class="active" data-page="dashboard">📊 <span>ภาพรวม</span></button>
@@ -470,7 +639,7 @@ body[data-module="enroll"] .kpi:after{background:var(--brand-gradient)}
                 <th>ร้านค้า</th>
                 <th class="num">ทุนเก่า</th>
                 <th class="num">ทุนใหม่</th>
-                <th class="num">รวม</th>
+                <th class="num">รวม</th><th class="num">จัดการ</th>
               </tr>
             </thead>
             <tbody id="creditNameRows"></tbody>
@@ -611,6 +780,31 @@ body[data-module="enroll"] .kpi:after{background:var(--brand-gradient)}
           <table>
             <thead><tr><th>กลุ่ม</th><th>ร้านค้า/คู่ค้า</th><th class="num">Unit</th><th class="num">ต้นทุน/Unit</th><th>วันที่</th><th>สถานะ</th><th></th></tr></thead>
             <tbody id="allOutstanding"></tbody>
+          </table>
+        </div>
+
+        <div id="outstandingPaymentPanel" class="card form-card" style="margin-top:16px">
+          <div class="panel-title">
+            <span>ชำระเครดิตคงค้าง</span>
+            <span class="badge b-green">สร้างยอดขาย Easy Smart Lock อัตโนมัติ</span>
+          </div>
+          <div class="form-grid outstanding-payment-grid">
+            <div class="field"><label>วันที่ชำระ</label><input id="payDate" type="text" inputmode="numeric" placeholder="dd/mm/yyyy"></div>
+            <div class="field"><label>ร้านค้า</label><select id="payName"></select></div>
+            <div class="field"><label>ชุดทุน</label><select id="payLot"></select><div class="payment-lot-hint" id="payLotHint"></div></div>
+            <div class="field"><label>ชำระกี่เครดิต</label><input id="payUnits" type="number" min="1"></div>
+            <div class="field"><label>ต้นทุน / เครดิต</label><input id="payCpu" type="number" min="0" step="0.01" placeholder="ระบุต้นทุนจริง"></div>
+            <div class="field"><label>ยอดชำระ / ยอดขาย</label><input id="payPrice" type="number" min="0" step="0.01"></div>
+            <div class="field"><label>หมายเหตุ</label><input id="payNote" placeholder="ถ้ามี"></div>
+            <div class="field"><label>&nbsp;</label><button class="btn btn-primary" style="width:100%" onclick="saveOutstandingPayment()">บันทึกการชำระ</button><div class="payment-lot-hint">&nbsp;</div></div>
+          </div>
+        </div>
+
+        <div class="card panel" style="margin-top:16px">
+          <div class="panel-title">ประวัติการชำระเครดิตคงค้าง</div>
+          <table>
+            <thead><tr><th>วันที่</th><th>ร้านค้า</th><th>ชุดทุน</th><th class="num">เครดิต</th><th class="num">ต้นทุน/เครดิต</th><th class="num">ยอดชำระ</th><th>หมายเหตุ</th><th></th></tr></thead>
+            <tbody id="outstandingPaymentRows"></tbody>
           </table>
         </div>
 
@@ -910,7 +1104,7 @@ body[data-module="enroll"] .kpi:after{background:var(--brand-gradient)}
 
 
 <script>
-const key='easy-enroll-business-manager-prod-v1';
+const key='easy-enroll-business-manager-online-cache-v1';
 const defaultData={
   balance:459,
   sales:[
@@ -980,9 +1174,77 @@ const defaultData={
   }
 };
 let db=JSON.parse(localStorage.getItem(key)||'null')||defaultData;
+let cloudReady=false;
+let cloudUnsubscribe=null;
+let cloudWriteTimer=null;
+const CLOUD_COLLECTION='businessManager';
+const CLOUD_DOCUMENT='main';
+
+function cacheLocal(){ localStorage.setItem(key,JSON.stringify(db)); }
+
+function showCloudStatus(text,state='ok'){
+  const el=document.getElementById('cloudStatus');
+  if(!el)return;
+  el.textContent=text;
+  el.dataset.state=state;
+}
+
+async function cloudSaveNow(){
+  if(!cloudReady || !window.__cloud)return;
+  const {db:firestore,doc,setDoc}=window.__cloud;
+  const ref=doc(firestore,CLOUD_COLLECTION,CLOUD_DOCUMENT);
+  await setDoc(ref,JSON.parse(JSON.stringify(db)),{merge:false});
+}
+
+function scheduleCloudSave(){
+  cacheLocal();
+  clearTimeout(cloudWriteTimer);
+  cloudWriteTimer=setTimeout(()=>{
+    cloudSaveNow().catch(err=>{
+      console.error(err);
+      showCloudStatus('บันทึก Cloud ไม่สำเร็จ','error');
+    });
+  },250);
+}
+
+async function initCloud(){
+  if(!window.__cloud)return;
+  const {db:firestore,doc,getDoc,setDoc,onSnapshot}=window.__cloud;
+  const ref=doc(firestore,CLOUD_COLLECTION,CLOUD_DOCUMENT);
+  try{
+    const snap=await getDoc(ref);
+    if(snap.exists()){
+      db=snap.data();
+      cacheLocal();
+    }else{
+      await setDoc(ref,JSON.parse(JSON.stringify(db)));
+    }
+    cloudReady=true;
+    showCloudStatus('Cloud พร้อมใช้งาน','ok');
+    renderAll();
+
+    if(cloudUnsubscribe)cloudUnsubscribe();
+    cloudUnsubscribe=onSnapshot(ref,(snap)=>{
+      if(!snap.exists())return;
+      db=snap.data();
+      cacheLocal();
+      renderAll();
+      showCloudStatus('ข้อมูลซิงก์แล้ว','ok');
+    },()=>{
+      showCloudStatus('Cloud หลุดการเชื่อมต่อ','error');
+    });
+  }catch(err){
+    console.error(err);
+    showCloudStatus('ใช้ข้อมูลในเครื่องชั่วคราว','warn');
+  }
+}
+
+window.addEventListener('firebase-ready',initCloud);
+if(window.__cloud)initCloud();
 let editSaleId=null;
 let editOutId=null;
 if(!db.creditAdjustments) db.creditAdjustments=[];
+if(!db.outstandingPayments) db.outstandingPayments=[];
 if(!db.creditImports) db.creditImports=[];
 if(!db.customers) db.customers=[
   'Space One','Nano Friend','Smile Plus','Fast Choice','Flukbike','IOS Store','PP Plus','KEE','OTP'
@@ -1118,34 +1380,50 @@ function filteredImports(){return (db.creditImports||[]).filter(x=>x.module===ac
 
 
 function cloneRows(rows){
-  return (rows||[]).map(r=>({name:r.name,old:+r.old||0,newv:+r.newv||0}));
+  return (rows||[]).map(r=>({
+    name:r.name,
+    old:+r.old||0,
+    newv:+r.newv||0,
+    oldCpu:r.oldCpu==null?'':r.oldCpu,
+    newCpu:r.newCpu==null?'':r.newCpu
+  }));
 }
-function mergeOutstandingRows(baseRows, monthEntries){
+function mergeOutstandingRows(baseRows, monthEntries, payments=[]){
   const map={};
   cloneRows(baseRows).forEach(r=>{
-    map[r.name]={name:r.name,old:r.old,newv:r.newv};
+    map[r.name]={name:r.name,old:r.old,newv:r.newv,oldCpu:r.oldCpu??'',newCpu:r.newCpu??''};
   });
   (monthEntries||[]).forEach(x=>{
-    if(!map[x.name])map[x.name]={name:x.name,old:0,newv:0};
-    if(x.lot==='old') map[x.name].old+=(+x.units||0);
-    else map[x.name].newv+=(+x.units||0);
+    if(!map[x.name])map[x.name]={name:x.name,old:0,newv:0,oldCpu:'',newCpu:''};
+    if(x.lot==='old'){
+      map[x.name].old+=(+x.units||0);
+      if(x.cpu!==''&&x.cpu!=null)map[x.name].oldCpu=+x.cpu;
+    }else{
+      map[x.name].newv+=(+x.units||0);
+      if(x.cpu!==''&&x.cpu!=null)map[x.name].newCpu=+x.cpu;
+    }
   });
-  return Object.values(map).filter(r=>(r.old+r.newv)!==0);
+  (payments||[]).forEach(p=>{
+    if(!map[p.name])map[p.name]={name:p.name,old:0,newv:0,oldCpu:'',newCpu:''};
+    if(p.lot==='old')map[p.name].old=Math.max(0,(+map[p.name].old||0)-(+p.units||0));
+    else map[p.name].newv=Math.max(0,(+map[p.name].newv||0)-(+p.units||0));
+  });
+  return Object.values(map).filter(r=>(r.old+r.newv)>0);
 }
 function getOutstandingStateForMonth(m){
+  const monthPayments=(db.outstandingPayments||[]).filter(x=>x.module==='easy'&&monthKey(x.date)===m);
   if(m==='2026-07'){
-    return {
-      total:5070,
-      rows:[
-        {name:'Fast Choice',old:0,newv:200},
-        {name:'Nano Friend',old:1250,newv:720},
-        {name:'Smile Plus',old:200,newv:2700}
-      ]
-    };
+    const base=[
+      {name:'Fast Choice',old:0,newv:200,oldCpu:'',newCpu:''},
+      {name:'Nano Friend',old:1250,newv:720,oldCpu:'',newCpu:''},
+      {name:'Smile Plus',old:200,newv:2700,oldCpu:'',newCpu:''}
+    ];
+    const rows=mergeOutstandingRows(base,[],monthPayments);
+    return {total:rows.reduce((a,r)=>a+r.old+r.newv,0),rows};
   }
   const carry=db.monthlyOutstandingCarry[m]||{total:0,rows:[]};
   const monthEntries=db.outstanding.filter(x=>x.module==='easy'&&monthKey(x.date)===m);
-  const rows=mergeOutstandingRows(carry.rows,monthEntries);
+  const rows=mergeOutstandingRows(carry.rows,monthEntries,monthPayments);
   return {total:rows.reduce((a,r)=>a+r.old+r.newv,0),rows};
 }
 function rollOutstandingForward(m){
@@ -1191,7 +1469,7 @@ function makeId(prefix){
 db.sales=(db.sales||[]).map(x=>({...x,module:x.module||'easy',_id:x._id||makeId('sale')}));
 db.outstanding=(db.outstanding||[]).map(x=>({...x,module:x.module||'easy',_id:x._id||makeId('credit')}));
 localStorage.setItem(key,JSON.stringify(db));
-function save(){localStorage.setItem(key,JSON.stringify(db));renderAll()}
+function save(){scheduleCloudSave();renderAll()}
 function fmt(n){return new Intl.NumberFormat('th-TH',{maximumFractionDigits:0}).format(Number(n||0))}
 function money(n){return '฿'+fmt(n)}
 function displayDate(v){
@@ -1256,10 +1534,10 @@ function snapshotCurrentMonth(module,m){
     const odm=monthSales(m).filter(x=>x.channel==='ODM').map(calcSale);
     const easyCredits=easy.reduce((a,s)=>a+(+s.units||0),0);
     const odmGross=odm.reduce((a,s)=>a+(+s.profit||0),0);const odmProfit=odmGross-monthExpenseForCategory('easy',m,'ODM');
-    const ownerEasy=easyCredits*(+db.dividendSettings.easyPerCredit||0);
-    const ownerOdm=odmProfit*((+db.dividendSettings.easyOdmPct||0)/100);
-    const eachOther=t.profit*((+db.dividendSettings.easyOtherPct||0)/100);
-    const pc=+db.dividendSettings.easyPartnerCount||0; return {owner:ownerEasy+ownerOdm,others:eachOther*pc,total:ownerEasy+ownerOdm+eachOther*pc};
+    const ownerEasy=easyCredits*10;
+    const ownerOdm=odmProfit*0.05;
+    const eachOther=t.profit*0.05;
+    return {owner:ownerEasy+ownerOdm,others:eachOther*3,total:ownerEasy+ownerOdm+eachOther*3};
   })() : (()=> {
     const units=t.units;
     const owner=(units*(+db.dividendSettings.enrollPerCredit||0)) + (t.profit*((+db.dividendSettings.enrollOwnerRate||0)/100));
@@ -1653,7 +1931,8 @@ function renderDashboard(){
       <td class="num">${r.old?fmt(r.old):'-'}</td>
       <td class="num">${r.newv?fmt(r.newv):'-'}</td>
       <td class="num"><strong>${fmt((r.old||0)+(r.newv||0))}</strong></td>
-    </tr>`).join('')||'<tr><td colspan="4">ไม่มีเครดิตคงค้างในเดือนนี้</td></tr>';
+      <td class="num">${activeModule==='easy'?`<button class="btn btn-light" onclick="goToOutstandingPayment('${String(r.name).replace(/'/g,"\\'")}')">ชำระ</button>`:''}</td>
+    </tr>`).join('')||'<tr><td colspan="5">ไม่มีเครดิตคงค้างในเดือนนี้</td></tr>';
   }
   outTotal.textContent=fmt(creditRowsSource.reduce((a,r)=>a+(r.old||0)+(r.newv||0),0))+' Unit';
 
@@ -1748,10 +2027,41 @@ function renderDashboard(){
       const cards=categoryCodes.map(code=>{
         const arr=rows.filter(x=>x.channel===code);
         if(!arr.length)return '';
-        const badge=activeModule==='easy'?(code==='Easy Smart Lock'?`ปันผล ${fmt(db.dividendSettings.easyPerCredit||0)} บาท / เครดิต`:code==='ODM'?`ปันผล ${fmt(db.dividendSettings.easyOdmPct||0)}% จากกำไร`:''):'EnrollOne';
-        return `<div class="card panel"><div class="panel-title"><span>${categoryDisplayName(activeModule,code)}</span>${badge?`<span class="badge ${code==='ODM'?'b-blue':'b-red'}">${badge}</span>`:''}</div><table><thead><tr><th>วันที่</th><th>ร้านค้า</th><th class="num">Unit</th><th class="num">ยอดขาย</th><th class="num">ต้นทุน</th><th class="num">กำไร</th><th></th></tr></thead><tbody>${arr.map(x=>{const c=calcSale(x);return `<tr><td>${displayDate(x.date)}</td><td>${x.customer}</td><td class="num">${fmt(x.units)}</td><td class="num">${money(x.price)}</td><td class="num">${money(c.cost)}</td><td class="num green">${money(c.profit)}</td><td style="white-space:nowrap"><button class="btn btn-light" onclick="editSale('${x._id}')">แก้ไข</button> <button class="btn btn-light" onclick="delSale('${x._id}')">ลบ</button></td></tr>`}).join('')}</tbody></table></div>`
+        const badge=activeModule==='easy'
+          ?(code==='Easy Smart Lock'
+            ?`ปันผล ${fmt(db.dividendSettings.easyPerCredit||0)} บาท / เครดิต`
+            :code==='ODM'
+              ?`ปันผล ${fmt(db.dividendSettings.easyOdmPct||0)}% จากกำไร`
+              :'')
+          :'EnrollOne';
+        return `<div class="card panel">
+          <div class="panel-title"><span>${categoryDisplayName(activeModule,code)}</span>${badge?`<span class="badge ${code==='ODM'?'b-blue':'b-red'}">${badge}</span>`:''}</div>
+          <table>
+            <thead><tr><th>วันที่</th><th>ร้านค้า</th><th class="num">Unit</th><th class="num">ยอดขาย</th><th class="num">ต้นทุน</th><th class="num">กำไร</th><th></th></tr></thead>
+            <tbody>${arr.map(x=>{
+              const c=calcSale(x);
+              const sourceBadge=x.source==='outstanding_payment'?'<span class="badge b-green" style="margin-left:6px">ชำระคงค้าง</span>':'';
+              return `<tr>
+                <td>${displayDate(x.date)}</td>
+                <td>${x.customer}${sourceBadge}</td>
+                <td class="num">${fmt(x.units)}</td>
+                <td class="num">${money(x.price)}</td>
+                <td class="num">${money(c.cost)}</td>
+                <td class="num green">${money(c.profit)}</td>
+                <td style="white-space:nowrap">
+                  ${x.source==='outstanding_payment'
+                    ?'<span class="badge b-green">จัดการที่ประวัติชำระ</span>'
+                    :`<button class="btn btn-light" onclick="editSale('${x._id}')">แก้ไข</button> <button class="btn btn-light" onclick="delSale('${x._id}')">ลบ</button>`}
+                </td>
+              </tr>`
+            }).join('')}</tbody>
+          </table>
+        </div>`
       }).join('');
-      return `<details class="sales-month-card" ${open}><summary><strong>${monthLabel(m)}</strong><span>${fmt(rows.reduce((a,x)=>a+(+x.units||0),0))} Unit · ${money(rows.reduce((a,x)=>a+(+x.price||0),0))}</span></summary><div class="grid2 sales-month-grid">${cards}</div></details>`;
+      return `<details class="sales-month-card" ${open}>
+        <summary><strong>${monthLabel(m)}</strong><span>${fmt(rows.reduce((a,x)=>a+(+x.units||0),0))} Unit · ${money(rows.reduce((a,x)=>a+(+x.price||0),0))}</span></summary>
+        <div class="grid2 sales-month-grid">${cards}</div>
+      </details>`;
     }).join('')||'<div class="card panel">ยังไม่มีรายการ</div>';
   }
 
@@ -1766,6 +2076,9 @@ function renderDashboard(){
       <button class="btn btn-light" onclick="delOut('${x._id}')">ลบรายการ</button>
     </td>
   </tr>`).join('');
+
+  renderOutstandingPayments();
+  refreshOutstandingPaymentOptions();
 
   creditAdjustmentRows.innerHTML=db.creditAdjustments.slice().reverse().map(a=>`<tr>
     <td>${displayDate(a.date)}</td>
@@ -2140,12 +2453,142 @@ function cancelSaleEdit(){
 }
 function delSale(id){
   const row=db.sales.find(x=>x._id===id);
+  if(row?.source==='outstanding_payment')return alert('รายการนี้เกิดจากการชำระเครดิตคงค้าง ให้ยกเลิกจากประวัติการชำระ');
   if(row&&!ensureMonthEditable(row.module||'easy',monthKey(row.date)))return;
   if(!confirm('ลบรายการขายนี้หรือไม่?'))return;
   db.sales=db.sales.filter(x=>x._id!==id);
   if(editSaleId===id)cancelSaleEdit();
   save();
 }
+function getPaymentState(){
+  const date=toISODate(document.getElementById('payDate')?.value||'');
+  const m=date?monthKey(date):(months()[0]||selectedMonth());
+  return {month:m,state:getOutstandingStateForMonth(m)};
+}
+function inferOutstandingCpu(name,lot,row){
+  const rowCpu=lot==='old'?row?.oldCpu:row?.newCpu;
+  if(rowCpu!==''&&rowCpu!=null)return rowCpu;
+  const raw=db.outstanding
+    .filter(x=>x.module==='easy'&&x.name===name&&x.lot===lot&&x.cpu!==''&&x.cpu!=null)
+    .sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+  if(raw)return +raw.cpu||0;
+  const prior=(db.outstandingPayments||[])
+    .filter(x=>x.module==='easy'&&x.name===name&&x.lot===lot&&x.cpu!==''&&x.cpu!=null)
+    .sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+  return prior?+prior.cpu||0:'';
+}
+function refreshOutstandingPaymentOptions(preferredName=null){
+  const nameEl=document.getElementById('payName'),lotEl=document.getElementById('payLot');
+  if(!nameEl||!lotEl)return;
+  const {state}=getPaymentState();
+  const prev=preferredName||nameEl.value;
+  nameEl.innerHTML=state.rows.map(r=>`<option value="${r.name}">${r.name} · ${fmt((r.old||0)+(r.newv||0))} เครดิต</option>`).join('');
+  if(prev&&state.rows.some(r=>r.name===prev))nameEl.value=prev;
+  refreshOutstandingPaymentLots();
+}
+function refreshOutstandingPaymentLots(){
+  const nameEl=document.getElementById('payName'),lotEl=document.getElementById('payLot');
+  if(!nameEl||!lotEl)return;
+  const {state}=getPaymentState();
+  const row=state.rows.find(r=>r.name===nameEl.value);
+  const opts=[];
+  if(row&&(+row.old||0)>0)opts.push({value:'old',label:`ทุนเก่า · คงเหลือ ${fmt(row.old)} เครดิต`,units:+row.old||0});
+  if(row&&(+row.newv||0)>0)opts.push({value:'new',label:`ทุนใหม่ · คงเหลือ ${fmt(row.newv)} เครดิต`,units:+row.newv||0});
+  lotEl.innerHTML=opts.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
+  const lot=lotEl.value;
+  const available=lot==='old'?(+row?.old||0):(+row?.newv||0);
+  const hint=document.getElementById('payLotHint');
+  if(hint)hint.textContent=opts.length?`ชำระได้สูงสุด ${fmt(available)} เครดิต`:'ไม่มีเครดิตคงค้างที่ชำระได้';
+  const cpu=inferOutstandingCpu(nameEl.value,lot,row);
+  const cpuEl=document.getElementById('payCpu');
+  if(cpuEl)cpuEl.value=cpu===''?'':cpu;
+  const u=document.getElementById('payUnits');
+  if(u)u.max=available||0;
+}
+function goToOutstandingPayment(name=''){
+  if(activeModule!=='easy')switchModule('easy');
+  goPage('transactions');
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));
+  const btn=[...document.querySelectorAll('.tabs button')].find(b=>b.dataset.tab==='outstanding');
+  if(btn)btn.classList.add('active');
+  saleTab.style.display='none';expenseTab.style.display='none';
+  if(document.getElementById('creditImportTab'))creditImportTab.style.display='none';
+  outstandingTab.style.display='block';
+  const now=new Date();
+  const d=`${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+  if(document.getElementById('payDate'))payDate.value=d;
+  refreshOutstandingPaymentOptions(name);
+  document.getElementById('outstandingPaymentPanel')?.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function saveOutstandingPayment(){
+  if(activeModule!=='easy')return alert('การชำระเครดิตคงค้างใช้เฉพาะ Easy Smart');
+  const date=toISODate(document.getElementById('payDate').value);
+  const name=document.getElementById('payName').value;
+  const lot=document.getElementById('payLot').value;
+  const units=+document.getElementById('payUnits').value||0;
+  const cpuRaw=document.getElementById('payCpu').value;
+  const price=+document.getElementById('payPrice').value||0;
+  const note=document.getElementById('payNote').value.trim();
+  if(!date||!name||!lot||units<=0)return alert('กรอกวันที่ ร้านค้า ชุดทุน และจำนวนเครดิตที่ชำระ');
+  if(cpuRaw==='')return alert('ระบุต้นทุนต่อเครดิตของชุดทุนนี้ก่อน เพื่อให้กำไรไม่ผิด');
+  if(!ensureMonthEditable('easy',monthKey(date)))return;
+
+  const state=getOutstandingStateForMonth(monthKey(date));
+  const row=state.rows.find(r=>r.name===name);
+  const available=lot==='old'?(+row?.old||0):(+row?.newv||0);
+  if(units>available)return alert('จำนวนที่ชำระมากกว่าเครดิตคงค้างของชุดทุนนี้');
+
+  const paymentId=makeId('payment');
+  const saleId=makeId('sale');
+  const cpu=+cpuRaw||0;
+
+  db.outstandingPayments.push({
+    _id:paymentId,module:'easy',date,name,lot,units,cpu,price,note,saleId
+  });
+
+  db.sales.push({
+    _id:saleId,module:'easy',date,channel:'Easy Smart Lock',
+    customer:name,units,price,cpu,
+    costProfileId:'',costProfileName:lot==='old'?'ทุนเก่า':'ทุนใหม่',
+    source:'outstanding_payment',paymentId
+  });
+
+  const carr=db.customersByModule.easy||(db.customersByModule.easy=[]);
+  if(!carr.includes(name))carr.push(name);
+
+  rollEasyCreditForward(monthKey(date));
+
+  document.getElementById('payUnits').value='';
+  document.getElementById('payPrice').value='';
+  document.getElementById('payNote').value='';
+  save();
+}
+function deleteOutstandingPayment(id){
+  const p=(db.outstandingPayments||[]).find(x=>x._id===id);
+  if(!p)return alert('ไม่พบรายการชำระ');
+  if(!ensureMonthEditable('easy',monthKey(p.date)))return;
+  if(!confirm('ยกเลิกรายการชำระนี้หรือไม่? ระบบจะลบยอดขาย Easy Smart Lock ที่สร้างจากรายการนี้ด้วย'))return;
+  db.outstandingPayments=db.outstandingPayments.filter(x=>x._id!==id);
+  db.sales=db.sales.filter(x=>x._id!==p.saleId && x.paymentId!==id);
+  rollEasyCreditForward(monthKey(p.date));
+  save();
+}
+function renderOutstandingPayments(){
+  const el=document.getElementById('outstandingPaymentRows');
+  if(!el)return;
+  const rows=(db.outstandingPayments||[]).filter(x=>x.module==='easy').slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  el.innerHTML=rows.map(p=>`<tr>
+    <td>${displayDate(p.date)}</td>
+    <td>${p.name}</td>
+    <td><span class="badge ${p.lot==='old'?'b-red':'b-blue'}">${p.lot==='old'?'ทุนเก่า':'ทุนใหม่'}</span></td>
+    <td class="num">${fmt(p.units)}</td>
+    <td class="num">${money(p.cpu)}</td>
+    <td class="num">${money(p.price)}</td>
+    <td>${p.note||'-'}</td>
+    <td><button class="btn btn-light" onclick="deleteOutstandingPayment('${p._id}')">ยกเลิก</button></td>
+  </tr>`).join('')||'<tr><td colspan="8">ยังไม่มีประวัติการชำระ</td></tr>';
+}
+
 function addOutstanding(){
   const el=id=>document.getElementById(id);
   let x={
@@ -2452,6 +2895,9 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
   outstandingTab.style.display=b.dataset.tab==='outstanding'?'block':'none';
   if(document.getElementById('creditImportTab'))document.getElementById('creditImportTab').style.display=b.dataset.tab==='creditImport'?'block':'none';
 });
+if(document.getElementById('payDate'))payDate.onchange=()=>refreshOutstandingPaymentOptions();
+if(document.getElementById('payName'))payName.onchange=()=>refreshOutstandingPaymentLots();
+if(document.getElementById('payLot'))payLot.onchange=()=>refreshOutstandingPaymentLots();
 if(document.getElementById('importType'))importType.onchange=()=>{
   const isOdm=importType.value==='odm';
   importOdmTarget.placeholder=isOdm?'เช่น Space One':'ไม่จำเป็นสำหรับประเภทนี้';
@@ -2461,9 +2907,46 @@ if(document.getElementById('monthlyExpenseMaster'))monthlyExpenseMaster.onchange
   if(x){monthlyExpenseAmount.value=x.defaultAmount||0;monthlyExpenseCategoryLabel.value=expenseCategoryName(activeModule,x.categoryCode)}
 };
 monthSelect.onchange=renderDashboard;summaryMonth.onchange=()=>{renderSummary();updateCloseMonthButton()};
-saleDate.value='07/08/2026';outDate.value='07/08/2026';if(document.getElementById('expenseDate'))expenseDate.value='07/08/2026';if(document.getElementById('importDate'))importDate.value='07/08/2026';
+saleDate.value='07/08/2026';outDate.value='07/08/2026';if(document.getElementById('payDate')){const n=new Date();payDate.value=`${String(n.getDate()).padStart(2,'0')}/${String(n.getMonth()+1).padStart(2,'0')}/${n.getFullYear()}`;}if(document.getElementById('expenseDate'))expenseDate.value='07/08/2026';if(document.getElementById('importDate'))importDate.value='07/08/2026';
 renderAll();
 </script>
-<div style="display:none" id="appBuild">Online v1.1.4 · Fix #1 #2 #3</div>
+<div style="display:none" id="appBuild">Online v1.2 · Fix #1 #2 #3 + Outstanding Payment</div>
+
+<script>
+(function(){
+  const PIN_HASH="82b87b56b096bcf4be784d993717c10443d843ebc880e4dae7cd5d049240d451";
+  async function sha256(text){
+    const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+  }
+  function unlock(){
+    document.getElementById("pinGate").style.display="none";
+    sessionStorage.setItem("easyEnrollUnlocked","1");
+  }
+  async function checkPin(){
+    const input=document.getElementById("pinInput");
+    const err=document.getElementById("pinError");
+    err.textContent="";
+    if(await sha256(input.value)===PIN_HASH){
+      unlock();
+    }else{
+      input.value="";
+      err.textContent="PIN ไม่ถูกต้อง";
+      input.focus();
+    }
+  }
+  window.addEventListener("DOMContentLoaded",()=>{
+    if(sessionStorage.getItem("easyEnrollUnlocked")==="1"){
+      unlock();
+      return;
+    }
+    const input=document.getElementById("pinInput");
+    document.getElementById("pinEnterBtn").addEventListener("click",checkPin);
+    input.addEventListener("keydown",e=>{ if(e.key==="Enter") checkPin(); });
+    input.focus();
+  });
+})();
+</script>
+
 </body>
 </html>
