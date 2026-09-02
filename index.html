@@ -758,7 +758,7 @@ window.dispatchEvent(new Event("firebase-ready"));
         <div class="sumitem"><small>ยอดขายรวม</small><strong id="sSales">฿0</strong></div>
         <div class="sumitem"><small>ทุนรวม</small><strong id="sCost">฿0</strong></div>
         <div class="sumitem"><small>กำไรรวม</small><strong id="sProfit">฿0</strong></div>
-        <div class="sumitem"><small>ปันผลของพี่</small><strong class="red" id="sOwnerDividend">฿0</strong></div>
+        <div class="sumitem"><small>ปันผลของJack</small><strong class="red" id="sOwnerDividend">฿0</strong></div>
         <div class="sumitem"><small>ปันผลอีก 3 คน</small><strong class="red" id="sOthersDividend">฿0</strong><div class="hint" id="sEachOtherDividend">คนละ ฿0</div></div>
         <div class="sumitem"><small>ยอดจ่ายนายทุน</small><strong class="green" id="sInvestorPayout">฿0</strong></div>
       </div>
@@ -770,13 +770,13 @@ window.dispatchEvent(new Event("firebase-ready"));
             <thead><tr><th>ผู้รับ</th><th>ฐานคำนวณ</th><th class="num">อัตรา</th><th class="num">เงินปันผล</th></tr></thead>
             <tbody>
               <tr>
-                <td><span class="badge b-red" id="ownerDividendLabel">พี่ · Easy Smart</span></td>
+                <td><span class="badge b-red" id="ownerDividendLabel">Jack · Easy Smart</span></td>
                 <td id="easyBase">0 เครดิต</td>
                 <td class="num">10 บาท / เครดิต</td>
                 <td class="num money red" id="easyDividendRow">฿0</td>
               </tr>
               <tr>
-                <td><span class="badge b-blue" id="ownerSecondDividendLabel">พี่ · ODM</span></td>
+                <td><span class="badge b-blue" id="ownerSecondDividendLabel">Jack · ODM</span></td>
                 <td id="odmBase">กำไร ฿0</td>
                 <td class="num">5% ของกำไร ODM</td>
                 <td class="num money red" id="odmDividendRow">฿0</td>
@@ -806,7 +806,7 @@ window.dispatchEvent(new Event("firebase-ready"));
             </tbody>
           </table>
           <div class="note" style="margin-top:12px">
-            ของพี่คิดแบบเฉพาะ: Easy Smart = 10 บาทต่อเครดิต และ ODM = 5% ของกำไร ODM ส่วนอีก 3 คน แต่ละคนได้ 5% ของกำไรรวมจากทุกหมวด
+            ของJackคิดแบบเฉพาะ: Easy Smart = 10 บาทต่อเครดิต และ ODM = 5% ของกำไร ODM ส่วนอีก 3 คน แต่ละคนได้ 5% ของกำไรรวมจากทุกหมวด
           </div>
         </div>
 
@@ -816,7 +816,7 @@ window.dispatchEvent(new Event("firebase-ready"));
             <tbody>
               <tr><td>ทุนรวม</td><td class="num money" id="investCost">฿0</td></tr>
               <tr><td>บวก กำไรรวม</td><td class="num money green" id="investProfit">฿0</td></tr>
-              <tr><td>หัก ปันผลของพี่</td><td class="num money red" id="investOwner">-฿0</td></tr>
+              <tr><td>หัก ปันผลของJack</td><td class="num money red" id="investOwner">-฿0</td></tr>
               <tr><td>หัก ปันผลอีก 3 คน <small id="investEachOther" style="color:var(--muted)">(คนละ ฿0)</small></td><td class="num money red" id="investOthers">-฿0</td></tr>
               <tr style="font-size:16px"><td><strong>ยอดจ่ายนายทุน</strong></td><td class="num money green" id="investTotal">฿0</td></tr>
             </tbody>
@@ -890,12 +890,12 @@ window.dispatchEvent(new Event("firebase-ready"));
 
           <div id="easyDividendSettings">
             <div class="rule-row">
-              <div class="field"><label>พี่ · Easy Smart Lock</label><input value="บาทต่อเครดิต" disabled></div>
+              <div class="field"><label>Jack · Easy Smart Lock</label><input value="บาทต่อเครดิต" disabled></div>
               <div class="field"><label>อัตรา</label><input id="setEasyPerCredit" type="number" min="0"></div>
               <div class="field"><label>หน่วย</label><input value="บาท/เครดิต" disabled></div>
             </div>
             <div class="rule-row">
-              <div class="field"><label>พี่ · ODM</label><input value="% จากกำไร ODM" disabled></div>
+              <div class="field"><label>Jack · ODM</label><input value="% จากกำไร ODM" disabled></div>
               <div class="field"><label>อัตรา</label><input id="setEasyOdmPct" type="number" min="0"></div>
               <div class="field"><label>หน่วย</label><input value="%" disabled></div>
             </div>
@@ -908,7 +908,7 @@ window.dispatchEvent(new Event("firebase-ready"));
 
           <div id="enrollDividendSettings" style="display:none">
             <div class="rule-row">
-              <div class="field"><label>ของพี่ · วิธีคำนวณ</label>
+              <div class="field"><label>ของJack · วิธีคำนวณ</label>
                 <select id="setEnrollOwnerMethod">
                   <option value="none">ไม่คิดปันผล</option>
                   <option value="profit_percent">% จากกำไร</option>
@@ -1496,7 +1496,7 @@ function renderSettings(){
   enrollDividendSettings.style.display=settingsModule==='enroll'?'block':'none';
   easyCreditSettingCard.style.display=settingsModule==='easy'?'block':'none';
   dividendSettingDesc.textContent=settingsModule==='easy'
-    ?'Easy Smart: พี่ได้ 10 บาท/เครดิตฝั่ง '+categoryDisplayName('easy','Easy Smart Lock')+' + 5% กำไร '+categoryDisplayName('easy','ODM')+' และผู้รับอื่นคิดจากกำไรรวม'
+    ?'Easy Smart: Jackได้ 10 บาท/เครดิตฝั่ง '+categoryDisplayName('easy','Easy Smart Lock')+' + 5% กำไร '+categoryDisplayName('easy','ODM')+' และผู้รับอื่นคิดจากกำไรรวม'
     :'EnrollOne: เลือกวิธีปันผลได้เอง เพื่อเปลี่ยนสูตรในอนาคตโดยไม่ต้องแก้โค้ด';
 
   setEasyPerCredit.value=db.dividendSettings.easyPerCredit||0;
@@ -2488,8 +2488,8 @@ function applyModuleUI(){
   document.getElementById('summaryTitle').textContent='สรุปสิ้นเดือน '+(easy?'Easy Smart':'EnrollOne');
   document.getElementById('summarySub').textContent=easy?'สรุปยอดขายและปันผลของ Easy Smart':'สรุปยอดขายและปันผลของ EnrollOne';
   const l1=document.getElementById('ownerDividendLabel'),l2=document.getElementById('ownerSecondDividendLabel');
-  if(l1)l1.textContent=easy?'พี่ · '+categoryDisplayName('easy','Easy Smart Lock'):'พี่ · '+categoryDisplayName('enroll','EnrollOne');
-  if(l2)l2.textContent=easy?'พี่ · '+categoryDisplayName('easy','ODM'):'สูตรเสริม';
+  if(l1)l1.textContent=easy?'Jack · '+categoryDisplayName('easy','Easy Smart Lock'):'Jack · '+categoryDisplayName('enroll','EnrollOne');
+  if(l2)l2.textContent=easy?'Jack · '+categoryDisplayName('easy','ODM'):'สูตรเสริม';
 
   renderSaleCategoryOptions();
   const impBtn=document.getElementById('creditImportTabBtn');
