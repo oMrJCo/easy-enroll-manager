@@ -2489,12 +2489,14 @@ function refreshOutstandingPaymentOptions(preferredName=null){
 function refreshOutstandingPaymentLots(){
   const nameEl=document.getElementById('payName'),lotEl=document.getElementById('payLot');
   if(!nameEl||!lotEl)return;
+  const previousLot=lotEl.value;
   const {state}=getPaymentState();
   const row=state.rows.find(r=>r.name===nameEl.value);
   const opts=[];
   if(row&&(+row.old||0)>0)opts.push({value:'old',label:`ทุนเก่า · คงเหลือ ${fmt(row.old)} เครดิต`,units:+row.old||0});
   if(row&&(+row.newv||0)>0)opts.push({value:'new',label:`ทุนใหม่ · คงเหลือ ${fmt(row.newv)} เครดิต`,units:+row.newv||0});
   lotEl.innerHTML=opts.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
+  if(previousLot&&opts.some(o=>o.value===previousLot))lotEl.value=previousLot;
   const lot=lotEl.value;
   const available=lot==='old'?(+row?.old||0):(+row?.newv||0);
   const hint=document.getElementById('payLotHint');
@@ -2897,7 +2899,16 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
 });
 if(document.getElementById('payDate'))payDate.onchange=()=>refreshOutstandingPaymentOptions();
 if(document.getElementById('payName'))payName.onchange=()=>refreshOutstandingPaymentLots();
-if(document.getElementById('payLot'))payLot.onchange=()=>refreshOutstandingPaymentLots();
+if(document.getElementById('payLot'))payLot.onchange=()=>{
+  const {state}=getPaymentState();
+  const row=state.rows.find(r=>r.name===payName.value);
+  const lot=payLot.value;
+  const available=lot==='old'?(+row?.old||0):(+row?.newv||0);
+  payLotHint.textContent=`ชำระได้สูงสุด ${fmt(available)} เครดิต`;
+  payUnits.max=available||0;
+  const cpu=inferOutstandingCpu(payName.value,lot,row);
+  payCpu.value=cpu===''?'':cpu;
+};
 if(document.getElementById('importType'))importType.onchange=()=>{
   const isOdm=importType.value==='odm';
   importOdmTarget.placeholder=isOdm?'เช่น Space One':'ไม่จำเป็นสำหรับประเภทนี้';
