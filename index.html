@@ -901,7 +901,10 @@ window.dispatchEvent(new Event("firebase-ready"));
     <section id="summary" class="section">
       <div class="top">
         <div><h1 id="summaryTitle">สรุปสิ้นเดือน Easy Smart</h1><div class="sub" id="summarySub">สรุปยอดขายและปันผลของ Easy Smart</div></div>
-        <select id="summaryMonth" class="select"></select>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select id="summaryMonth" class="select"></select>
+          <button class="btn btn-light" onclick="exportMonthlyReportPDF()">📄 Export PDF</button>
+        </div>
       </div>
 
       <div class="summaryline" style="grid-template-columns:repeat(6,1fr)">
@@ -2265,6 +2268,189 @@ function goToExpenseTab(){
 
   renderExpenseTransactions();
 }
+
+function reportEsc(v){
+  return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
+function reportNum(v){return new Intl.NumberFormat('th-TH',{maximumFractionDigits:2}).format(Number(v||0))}
+function reportMoney(v){return reportNum(v)+' บาท'}
+function exportMonthlyReportPDF(){
+  const m=summaryMonth.value||months()[0];
+  const module=activeModule;
+  const t=monthTotals(m);
+  const sales=monthSales(m).map(calcSale).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const expenses=(db.monthlyExpenses||[]).filter(x=>x.module===module&&x.month===m).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const expenseTotal=expenses.reduce((a,x)=>a+(+x.amount||0),0);
+  const netProfit=t.profit-expenseTotal;
+  const label=module==='easy'?'Easy Smart':'EnrollOne';
+
+  const tableRows=(rows,cols)=>rows.map(r=>`<tr>${cols.map(c=>`<td${c.r?' class="r"':''}>${c.f(r)}</td>`).join('')}</tr>`).join('');
+
+  // ---------- month-end dividend data ----------
+  let ownerDividend=0,othersDividend=0,totalDividend=0,investorPayout=0,dividendRows=[];
+  if(module==='easy'){
+    const easy=sales.filter(x=>x.channel==='Easy Smart Lock');
+    const odm=sales.filter(x=>x.channel==='ODM');
+    const easyCredits=easy.reduce((a,x)=>a+(+x.units||0),0);
+    const odmGross=odm.reduce((a,x)=>a+(+x.profit||0),0);
+    const odmProfit=odmGross-monthExpenseForCategory('easy',m,'ODM');
+    const ownerEasy=easyCredits*(+db.dividendSettings.easyPerCredit||0);
+    const ownerOdm=odmProfit*((+db.dividendSettings.easyOdmPct||0)/100);
+    ownerDividend=ownerEasy+ownerOdm;
+    const each=netProfit*((+db.dividendSettings.easyOtherPct||0)/100);
+    const count=+db.dividendSettings.easyPartnerCount||3;
+    othersDividend=each*count;
+    totalDividend=ownerDividend+othersDividend;
+    investorPayout=t.cost+netProfit-totalDividend;
+    dividendRows=[
+      ['พี่ - Easy Smart Lock',`${reportNum(easyCredits)} เครดิต × ${reportNum(db.dividendSettings.easyPerCredit)} บาท`,reportMoney(ownerEasy)],
+      ['พี่ - ODM',`กำไร ODM ${reportMoney(odmProfit)} × ${reportNum(db.dividendSettings.easyOdmPct)}%`,reportMoney(ownerOdm)],
+      ...Array.from({length:count},(_,i)=>[`ผู้รับปันผล ${i+1}`,`กำไรสุทธิ ${reportMoney(netProfit)} × ${reportNum(db.dividendSettings.easyOtherPct)}%`,reportMoney(each)]),
+      ['รวมเงินปันผล','',reportMoney(totalDividend)]
+    ];
+  }else{
+    const per=+db.dividendSettings.enrollPerCredit||0, rate=+db.dividendSettings.enrollOwnerRate||0;
+    const other=+db.dividendSettings.enrollOtherRate||0, count=+db.dividendSettings.enrollPartnerCount||0;
+    const d1=t.units*per,d2=netProfit*(rate/100),each=netProfit*(other/100);
+    ownerDividend=d1+d2; othersDividend=each*count; totalDividend=ownerDividend+othersDividend;
+    investorPayout=t.cost+netProfit-totalDividend;
+    dividendRows=[
+      ['พี่ - EnrollOne เครดิต',`${reportNum(t.units)} เครดิต × ${reportNum(per)} บาท`,reportMoney(d1)],
+      ['พี่ - EnrollOne กำไร',`กำไรสุทธิ ${reportMoney(netProfit)} × ${reportNum(rate)}%`,reportMoney(d2)],
+      ...Array.from({length:count},(_,i)=>[`ผู้รับปันผล ${i+1}`,`กำไรสุทธิ ${reportMoney(netProfit)} × ${reportNum(other)}%`,reportMoney(each)]),
+      ['รวมเงินปันผล','',reportMoney(totalDividend)]
+    ];
+  }
+
+  // ---------- overview data ----------
+  const channels=module==='easy'?['Easy Smart Lock','ODM','เคลม']:['EnrollOne'];
+  const channelRows=channels.map(code=>{
+    const arr=sales.filter(x=>x.channel===code);
+    const z=arr.reduce((a,x)=>({u:a.u+(+x.units||0),s:a.s+(+x.price||0),c:a.c+(+x.cost||0),p:a.p+(+x.profit||0)}),{u:0,s:0,c:0,p:0});
+    return [categoryDisplayName(module,code),reportNum(z.u),reportMoney(z.s),reportMoney(z.c),reportMoney(z.p)];
+  });
+
+  const expenseRows=expenses.map(x=>[
+    reportEsc(displayDate(x.date)), reportEsc(x.name), reportEsc(expenseCategoryName(x.module,x.categoryCode)),
+    reportMoney(x.amount), reportEsc(x.note||'-')
+  ]);
+
+  let overviewExtra='', salesHTML='', creditHTML='', activityHTML='';
+  if(module==='easy'){
+    const easy=sales.filter(x=>x.channel==='Easy Smart Lock');
+    const odm=sales.filter(x=>x.channel==='ODM');
+    const claim=sales.filter(x=>x.channel==='เคลม');
+    const os=getOutstandingStateForMonth(m);
+
+    // Same credit reconciliation logic used by Dashboard.
+    let creditState={opening:0,carry:0,imported:0,total:0,longNow:0,sale1:0,sale2:0,sale3:0,balance:0};
+    if(m==='2026-07'){
+      const s=db.easyCreditSnapshot;
+      creditState={opening:+s.opening||0,carry:+s.receivableOpening||0,imported:+s.odmAdded||0,total:+s.total||0,longNow:+s.receivableLatest||0,sale1:+s.saleLatest1||0,sale2:+s.saleLatest2||0,sale3:+s.saleLatest3||0,balance:+s.balance||0};
+    }else{
+      const opening=+(db.monthlyCreditCarry[m] ?? db.easyCreditSnapshot.balance ?? 0);
+      const carriedOutstanding=(db.monthlyOutstandingCarry[m]||{total:0,rows:[]});
+      const carry=+carriedOutstanding.total||0;
+      const imports=(db.creditImports||[]).filter(x=>x.module==='easy'&&monthKey(x.date)===m&&['normal','odm'].includes(x.type)).reduce((a,x)=>a+(+x.units||0),0);
+      const longNow=os.total;
+      const monthEasy=easy.reduce((a,x)=>a+(+x.units||0),0);
+      const monthOdm=odm.reduce((a,x)=>a+(+x.units||0),0);
+      const total=opening+carry+imports;
+      creditState={opening,carry,imported:imports,total,longNow,sale1:monthEasy,sale2:monthOdm,sale3:0,balance:total-longNow-monthEasy-monthOdm};
+    }
+
+    overviewExtra=`<section class="block">
+      <h2>เครดิตคงค้าง</h2><p class="desc">แสดงเฉพาะจำนวนเครดิตคงค้างต่อราย</p>
+      <table><thead><tr><th>ลูกค้า</th><th class="r">เครดิตคงค้าง</th></tr></thead><tbody>
+      ${os.rows.map(r=>`<tr><td>${reportEsc(r.name)}</td><td class="r">${reportNum((r.old||0)+(r.newv||0))} เครดิต</td></tr>`).join('')||'<tr><td colspan="2" class="empty">ไม่มีเครดิตคงค้าง</td></tr>'}
+      <tr class="total"><td>รวม</td><td class="r">${reportNum(os.total)} เครดิต</td></tr></tbody></table></section>`;
+
+    const salesPanel=(name,arr,cls)=>`<section class="biz ${cls}">
+      <div class="bizhead"><b>${reportEsc(categoryDisplayName('easy',name))}</b><strong>${reportMoney(arr.reduce((a,x)=>a+(+x.price||0),0))}</strong><small>${reportNum(arr.reduce((a,x)=>a+(+x.units||0),0))} เครดิต</small></div>
+      <table><thead><tr><th>วันที่</th><th>ลูกค้า</th><th class="r">เครดิต</th><th class="r">ยอดขาย</th><th class="r">ต้นทุน</th><th class="r">กำไร</th></tr></thead><tbody>
+      ${arr.map(x=>`<tr><td>${reportEsc(displayDate(x.date))}</td><td>${reportEsc(x.customer||'-')}</td><td class="r">${reportNum(x.units)}</td><td class="r">${reportMoney(x.price)}</td><td class="r">${reportMoney(x.cost)}</td><td class="r">${reportMoney(x.profit)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">ไม่มีรายการ</td></tr>'}
+      </tbody></table></section>`;
+    salesHTML=`<div class="twocol">${salesPanel('Easy Smart Lock',easy,'red')}${salesPanel('ODM',odm,'dark')}</div>${claim.length?salesPanel('เคลม',claim,'amber'):''}`;
+
+    creditHTML=`<section class="block"><h2>สรุปเครดิต</h2>
+      <div class="creditflow">
+        <div><span>เครดิตยกมา</span><b>${reportNum(creditState.opening)}</b></div>
+        <div><span>เครดิตคงค้างยกมา</span><b>${reportNum(creditState.carry)}</b></div>
+        <div><span>เติมเครดิต</span><b>${reportNum(creditState.imported)}</b></div>
+        <div><span>เครดิตพร้อมใช้รวม</span><b>${reportNum(creditState.total)}</b></div>
+        <div><span>เครดิตคงค้างล่าสุด</span><b>-${reportNum(creditState.longNow)}</b></div>
+        <div><span>ขาย Easy Smart Lock</span><b>-${reportNum(creditState.sale1)}</b></div>
+        <div><span>ขาย ODM</span><b>-${reportNum(creditState.sale2)}</b></div>
+        <div><span>ปรับปรุงอื่น</span><b>${creditState.sale3?'-'+reportNum(creditState.sale3):'0'}</b></div>
+        <div class="accent"><span>เครดิตคงเหลือ</span><b>${reportNum(creditState.balance)}</b></div>
+      </div></section>`;
+
+    const imports=(db.creditImports||[]).filter(x=>x.module==='easy'&&monthKey(x.date)===m&&['normal','odm'].includes(x.type)).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    const payments=(db.outstandingPayments||[]).filter(x=>x.module==='easy'&&monthKey(x.date)===m).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    activityHTML=`<section class="block"><h2>ประวัติเติมเครดิต</h2><table><thead><tr><th>วันที่</th><th>ประเภท</th><th>เติมให้</th><th class="r">เครดิต</th><th class="r">ต้นทุน/เครดิต</th><th class="r">เงินทุน</th><th>หมายเหตุ</th></tr></thead><tbody>
+      ${imports.map(x=>`<tr><td>${reportEsc(displayDate(x.date))}</td><td>${reportEsc(importTypeName(x.type))}</td><td>${reportEsc(x.odmTarget||'-')}</td><td class="r">${reportNum(x.units)}</td><td class="r">${x.cpu===''||x.cpu==null?'-':reportMoney(x.cpu)}</td><td class="r">${x.cpu===''||x.cpu==null?'-':reportMoney((+x.units||0)*(+x.cpu||0))}</td><td>${reportEsc(x.note||'-')}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">ไม่มีรายการเติมเครดิต</td></tr>'}
+      </tbody></table></section>
+      <section class="block"><h2>ประวัติชำระเครดิตคงค้าง</h2><table><thead><tr><th>วันที่</th><th>ลูกค้า</th><th>ชุดทุน</th><th class="r">เครดิต</th><th class="r">ต้นทุน/เครดิต</th><th class="r">ยอดชำระ</th><th>หมายเหตุ</th></tr></thead><tbody>
+      ${payments.map(x=>`<tr><td>${reportEsc(displayDate(x.date))}</td><td>${reportEsc(x.name)}</td><td>${x.lot==='old'?'ทุนเก่า':'ทุนใหม่'}</td><td class="r">${reportNum(x.units)}</td><td class="r">${reportMoney(x.cpu)}</td><td class="r">${reportMoney(x.price)}</td><td>${reportEsc(x.note||'-')}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">ไม่มีรายการชำระ</td></tr>'}
+      </tbody></table></section>`;
+  }else{
+    salesHTML=`<section class="biz enroll"><div class="bizhead"><b>ENROLLONE</b><strong>${reportMoney(t.sales)}</strong><small>${reportNum(t.units)} เครดิต</small></div>
+      <table><thead><tr><th>วันที่</th><th>ลูกค้า</th><th class="r">เครดิต</th><th class="r">ยอดขาย</th><th class="r">ต้นทุน</th><th class="r">กำไร</th></tr></thead><tbody>
+      ${sales.map(x=>`<tr><td>${reportEsc(displayDate(x.date))}</td><td>${reportEsc(x.customer||'-')}</td><td class="r">${reportNum(x.units)}</td><td class="r">${reportMoney(x.price)}</td><td class="r">${reportMoney(x.cost)}</td><td class="r">${reportMoney(x.profit)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">ไม่มีรายการ</td></tr>'}
+      </tbody></table></section>`;
+  }
+
+  const html=`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>${reportEsc(label)} Report ${reportEsc(m)}</title>
+  <style>
+  @page{size:A4;margin:12mm 12mm 14mm}*{box-sizing:border-box}body{font-family:Arial,'Noto Sans Thai',Tahoma,sans-serif;color:#15171b;margin:0;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{break-after:page}.page:last-child{break-after:auto}.kicker{font-size:9px;font-weight:800;color:#e51b2b;letter-spacing:.4px}.title{font-size:25px;font-weight:800;margin:4px 0}.sub,.desc{color:#737986}.sub{margin-bottom:16px}.block{margin-top:16px;break-inside:auto}h2{font-size:15px;margin:0 0 4px}
+  .hero{display:grid;grid-template-columns:1fr 1fr;background:#15171b;color:#fff;margin-bottom:9px}.hero>div{padding:15px}.hero>div+div{border-left:1px solid #3c4048}.hero span,.stats span,.creditflow span{display:block;font-size:9px;font-weight:700;color:#777d88}.hero span{color:#ddd}.hero b{display:block;font-size:23px;margin:6px 0}.hero small{color:#cfd2d8}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:9px 0 14px}.stats>div,.creditflow>div{border:1px solid #e4e6ea;padding:10px;background:#fff}.stats b,.creditflow b{display:block;font-size:17px;margin:5px 0}.stats small{color:#737986}.stats .accent,.creditflow .accent{background:#fff0f2}.stats .accent b,.creditflow .accent b{color:#e51b2b}
+  .creditflow{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}.biz{break-inside:avoid;margin-bottom:12px}.bizhead{color:#fff;padding:11px 12px}.bizhead b{display:block;font-size:9px}.bizhead strong{display:block;font-size:19px;margin:5px 0}.bizhead small{color:#e4e6ea}.red .bizhead{background:#e51b2b}.dark .bizhead{background:#272a31}.amber .bizhead{background:#9b5a00}.enroll .bizhead{background:linear-gradient(120deg,#40044c,#004096,#34cfe6)}
+  table{width:100%;border-collapse:collapse;break-inside:auto}thead{display:table-header-group}tr{break-inside:avoid}th{background:#f4f5f7;text-align:left;font-size:8.5px;padding:6px;border-bottom:1px solid #15171b;color:#666}td{padding:6px;border-bottom:1px solid #e4e6ea;vertical-align:top}.r{text-align:right;white-space:nowrap}.empty{text-align:center;color:#999;padding:14px}.total td{background:#fff0f2;font-weight:800}
+  .summary td{padding:9px}.summary tr:last-child td{background:#eef9f4;font-weight:800;font-size:14px}.final{background:#15171b;color:#fff;padding:15px 17px;display:flex;justify-content:space-between;align-items:center;margin-top:12px;break-inside:avoid}.final b{font-size:22px}.note{color:#888;font-size:8px;margin-top:9px}
+  </style></head><body>
+  <div class="page">
+    <div class="kicker">${reportEsc(label.toUpperCase())} / ${reportEsc(monthLabel(m))}</div><div class="title">Monthly Business Report</div><div class="sub">ข้อมูลหน้า “ภาพรวม” และ “สรุปสิ้นเดือน” ของเดือนที่เลือก</div>
+    <div class="hero"><div><span>ยอดขายรวม</span><b>${reportMoney(t.sales)}</b><small>รายได้ทั้งหมดของเดือน</small></div><div><span>กำไรสุทธิ</span><b>${reportMoney(netProfit)}</b><small>หลังหักค่าใช้จ่าย</small></div></div>
+    <div class="stats"><div><span>ต้นทุนรวม</span><b>${reportMoney(t.cost)}</b><small>ต้นทุนจากยอดขาย</small></div><div><span>กำไรก่อนค่าใช้จ่าย</span><b>${reportMoney(t.profit)}</b><small>Gross profit</small></div><div><span>เครดิตขายรวม</span><b>${reportNum(t.units)}</b><small>เครดิต</small></div><div class="accent"><span>ค่าใช้จ่าย</span><b>${reportMoney(expenseTotal)}</b><small>เดือนนี้</small></div></div>
+    <section class="block"><h2>สรุปตามหมวด</h2><table><thead><tr><th>หมวด</th><th class="r">เครดิต</th><th class="r">ยอดขาย</th><th class="r">ต้นทุน</th><th class="r">กำไร</th></tr></thead><tbody>
+    ${channelRows.map(r=>`<tr><td>${reportEsc(r[0])}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td><td class="r">${r[3]}</td><td class="r">${r[4]}</td></tr>`).join('')}</tbody></table></section>
+    ${overviewExtra}
+  </div>
+
+  <div class="page">
+    <div class="kicker">SALES DETAIL</div><div class="title">รายการขายทั้งหมด</div><div class="sub">${reportEsc(monthLabel(m))} · แสดงทุกรายการ ไม่จำกัด 7 รายการล่าสุด</div>
+    ${salesHTML}
+  </div>
+
+  ${module==='easy'?`<div class="page"><div class="kicker">CREDIT CONTROL</div><div class="title">เครดิตและประวัติการเคลื่อนไหว</div><div class="sub">${reportEsc(monthLabel(m))}</div>${creditHTML}${activityHTML}</div>`:''}
+
+  <div class="page">
+    <div class="kicker">EXPENSE & MONTH-END</div><div class="title">ค่าใช้จ่ายและสรุปสิ้นเดือน</div><div class="sub">${reportEsc(monthLabel(m))}</div>
+    <section class="block"><h2>ค่าใช้จ่ายทั้งหมด</h2><table><thead><tr><th>วันที่</th><th>รายการ</th><th>หักจาก</th><th class="r">จำนวนเงิน</th><th>หมายเหตุ</th></tr></thead><tbody>
+    ${expenseRows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td class="r">${r[3]}</td><td>${r[4]}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">ไม่มีค่าใช้จ่าย</td></tr>'}
+    <tr class="total"><td colspan="3">รวมค่าใช้จ่าย</td><td class="r">${reportMoney(expenseTotal)}</td><td></td></tr></tbody></table></section>
+    <section class="block"><h2>สรุปผลประกอบการ</h2><table class="summary"><tbody>
+      <tr><td>ยอดขายรวม</td><td class="r">${reportMoney(t.sales)}</td></tr>
+      <tr><td>ต้นทุนรวม</td><td class="r">${reportMoney(t.cost)}</td></tr>
+      <tr><td>กำไรก่อนค่าใช้จ่าย</td><td class="r">${reportMoney(t.profit)}</td></tr>
+      <tr><td>ค่าใช้จ่ายรวม</td><td class="r">-${reportMoney(expenseTotal)}</td></tr>
+      <tr><td>กำไรสุทธิ</td><td class="r">${reportMoney(netProfit)}</td></tr>
+    </tbody></table></section>
+    <section class="block"><h2>รายละเอียดเงินปันผล</h2><table><thead><tr><th>ผู้รับ/รายการ</th><th>ฐานคำนวณ</th><th class="r">จำนวนเงิน</th></tr></thead><tbody>
+      ${dividendRows.map((r,i)=>`<tr${i===dividendRows.length-1?' class="total"':''}><td>${reportEsc(r[0])}</td><td>${reportEsc(r[1])}</td><td class="r">${reportEsc(r[2])}</td></tr>`).join('')}
+    </tbody></table></section>
+    <div class="final"><div><span>ยอดจ่ายนายทุน</span><small style="display:block;color:#bbb;margin-top:4px">ทุนรวม + กำไรสุทธิ - เงินปันผลทั้งหมด</small></div><b>${reportMoney(investorPayout)}</b></div>
+    <div class="note">สร้างจากข้อมูลจริงในระบบ · ${new Date().toLocaleDateString('th-TH')}</div>
+  </div>
+  <script>window.onload=()=>setTimeout(()=>window.print(),450)<\/script></body></html>`;
+
+  const w=window.open('','_blank');
+  if(!w){alert('เบราว์เซอร์บล็อกหน้าต่าง Report กรุณาอนุญาต Pop-up แล้วลองใหม่');return}
+  w.document.open(); w.document.write(html); w.document.close();
+}
+
 function renderSummary(){
   const m=summaryMonth.value||months()[0],t=monthTotals(m);const expenseTotal=monthExpenseTotal(activeModule,m);const netProfit=t.profit-expenseTotal;
 
