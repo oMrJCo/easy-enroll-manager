@@ -733,14 +733,15 @@ window.dispatchEvent(new Event("firebase-ready"));
         <div class="card form-card">
           <div class="panel-title">เพิ่ม / แก้ไขรายการขาย</div>
           <div class="form-grid">
-            <div class="field"><label>วันที่</label><input id="saleDate" type="text" inputmode="numeric" placeholder="dd/mm/yyyy"></div>
+            <div class="field"><label>วันที่</label><input id="saleDate" type="date"></div>
             <div class="field"><label>หมวด</label><select id="saleChannel"><option value="Easy Smart Lock">Easy Smart Lock</option><option value="ODM">ODM</option><option value="เคลม">เคลม</option></select></div>
             <div class="field"><label>ร้านค้า</label>
   <input id="saleCustomer" list="customerMasterList" placeholder="เลือกหรือพิมพ์ชื่อร้านค้า">
   <datalist id="customerMasterList"></datalist>
 </div>
             <div class="field"><label>จำนวน Unit</label><input id="saleUnits" type="number" min="0"></div>
-            <div class="field"><label>ราคาขายรวม</label><input id="salePrice" type="number" min="0"></div>
+            <div class="field"><label>ราคาขาย / Unit</label><input id="saleUnitPrice" type="number" min="0" step="0.01" placeholder="0"></div>
+            <div class="field"><label>ราคาขายรวม</label><input id="salePrice" type="number" min="0" step="0.01" readonly tabindex="-1" style="background:#f5f6f8;font-weight:700"></div>
             <div class="field"><label>ชุดต้นทุน</label>
   <select id="saleCostProfile" onchange="applySelectedCostProfile()"></select>
   <div class="hint" id="saleCostHint">ใช้ค่าเริ่มต้นของโมดูล</div>
@@ -2573,7 +2574,7 @@ function addSale(){
   const profile=getCostProfileById(el('saleCostProfile').value)||getDefaultCostProfile(activeModule);
   let s={
     module:activeModule,
-    date:toISODate(el('saleDate').value),
+    date:el('saleDate').value,
     channel:el('saleChannel').value,
     customer:el('saleCustomer').value.trim(),
     units:+el('saleUnits').value||0,
@@ -2582,7 +2583,7 @@ function addSale(){
     costProfileName:profile?profile.name:'',
     cpu:profile?+profile.value||0:+el('saleCpu').value||0
   };
-  if(!s.date||!s.customer)return alert('ใส่วันที่รูปแบบ dd/mm/yyyy และร้านค้าก่อน');
+  if(!s.date||!s.customer)return alert('เลือกวันที่และใส่ร้านค้าก่อน');
   const carr=db.customersByModule[activeModule]||(db.customersByModule[activeModule]=[]);
   if(!carr.includes(s.customer))carr.push(s.customer);
   if(!ensureMonthEditable(activeModule,s.date.slice(0,7)))return;
@@ -2600,6 +2601,7 @@ function addSale(){
 
   el('saleCustomer').value='';
   el('saleUnits').value='';
+  el('saleUnitPrice').value='';
   el('salePrice').value='';
   el('saleCpu').value='60';
   el('saleSaveBtn').textContent='บันทึกการขาย';
@@ -2613,10 +2615,11 @@ function editSale(id){
   if(!ensureMonthEditable(s.module||'easy',monthKey(s.date)))return;
   editSaleId=id;
   if(s.module&&s.module!==activeModule)switchModule(s.module);
-  document.getElementById('saleDate').value=displayDate(s.date)==='-'?'':displayDate(s.date);
+  document.getElementById('saleDate').value=s.date||'';
   renderSaleCategoryOptions(s.channel);
   document.getElementById('saleCustomer').value=s.customer||'';
   document.getElementById('saleUnits').value=s.units??'';
+  document.getElementById('saleUnitPrice').value=(+s.units||0)?((+s.price||0)/(+s.units||1)):'';
   document.getElementById('salePrice').value=s.price??'';
   fillSaleCostProfiles(s.costProfileId||null);
   if(!s.costProfileId){
@@ -3104,7 +3107,10 @@ if(document.getElementById('monthlyExpenseMaster'))monthlyExpenseMaster.onchange
   if(x){monthlyExpenseAmount.value=x.defaultAmount||0;monthlyExpenseCategoryLabel.value=expenseCategoryName(activeModule,x.categoryCode)}
 };
 monthSelect.onchange=renderDashboard;summaryMonth.onchange=()=>{renderSummary();updateCloseMonthButton()};
-saleDate.value='07/08/2026';outDate.value='07/08/2026';if(document.getElementById('payDate')){const n=new Date();payDate.value=`${String(n.getDate()).padStart(2,'0')}/${String(n.getMonth()+1).padStart(2,'0')}/${n.getFullYear()}`;}if(document.getElementById('expenseDate'))expenseDate.value='07/08/2026';if(document.getElementById('importDate'))importDate.value='07/08/2026';
+function recalcSaleTotal(){const u=+document.getElementById('saleUnits').value||0,p=+document.getElementById('saleUnitPrice').value||0;document.getElementById('salePrice').value=(u*p).toFixed(2).replace(/\.00$/,'');}
+document.getElementById('saleUnits').addEventListener('input',recalcSaleTotal);
+document.getElementById('saleUnitPrice').addEventListener('input',recalcSaleTotal);
+{const n=new Date(),today=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');saleDate.value=today;}outDate.value='07/08/2026';if(document.getElementById('payDate')){const n=new Date();payDate.value=`${String(n.getDate()).padStart(2,'0')}/${String(n.getMonth()+1).padStart(2,'0')}/${n.getFullYear()}`;}if(document.getElementById('expenseDate'))expenseDate.value='07/08/2026';if(document.getElementById('importDate'))importDate.value='07/08/2026';
 renderAll();
 </script>
 <div style="display:none" id="appBuild">Online v1.2 · Fix #1 #2 #3 + Outstanding Payment</div>
